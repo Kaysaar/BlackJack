@@ -21,12 +21,8 @@ public class Deck {
     }
 
     void addCards(Type colors){
-        for (int i = 2; i < 12; i++) {
+        for (int i = 1; i < 14; i++) {
             Card card = new Card(i,colors);
-            deck.add(card);
-        }
-        for (int i = 0; i < 3; i++){
-            Card card = new Card(STRONGCARD,colors);
             deck.add(card);
         }
     }
