@@ -3,22 +3,28 @@ package Card;
 
 import java.util.ArrayList;
 
+import static Card.Type.*;
+
 public class Deck {
     public static final int STRONGCARD = 10;
     private ArrayList<Card> deck;
 
     public Deck(){
         deck = new ArrayList<>();
-        for (int j = 1; j<5; j++) {
-            for (int i = 2; i < 12; i++) {
-                Card card = new Card(i);
-                deck.add(card);
-            }
+        addCards(Spades);
+        addCards(Hearts);
+        addCards(Diamonds);
+        addCards(Clubs);
+    }
 
-            for (int i = 0; i < 3; i++){
-                Card card = new Card(STRONGCARD);
-                deck.add(card);
-            }
+    void addCards(Type colors){
+        for (int i = 2; i < 12; i++) {
+            Card card = new Card(i,colors);
+            deck.add(card);
+        }
+        for (int i = 0; i < 3; i++){
+            Card card = new Card(STRONGCARD,colors);
+            deck.add(card);
         }
     }
 }
