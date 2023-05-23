@@ -1,3 +1,5 @@
+package Card;
+
 public enum Type {
     Spades,
     Hearts,
