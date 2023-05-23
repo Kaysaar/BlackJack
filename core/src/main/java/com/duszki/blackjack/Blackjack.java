@@ -11,8 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class Blackjack extends Game {
     private Homepage homepage;
 
-
-
     @Override
     public void create() {
 

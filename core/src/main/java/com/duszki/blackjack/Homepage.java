@@ -1,12 +1,19 @@
 package com.duszki.blackjack;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -20,7 +27,8 @@ public class Homepage implements Screen {
     private OrthographicCamera camera;
     private FitViewport viewport;
 
-    private Skin helpSkin;
+    private TextureRegionDrawable help;
+
 
     public Homepage() {
 
@@ -31,8 +39,19 @@ public class Homepage implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
+        help = new TextureRegionDrawable(new Texture("skins/Help.png"));
 
+        ImageButton buttonHelp = new ImageButton(help);
+        buttonHelp.setSize(100,100);
+        float buttonX = (Gdx.graphics.getWidth() - buttonHelp.getWidth()) / 2f;
+        buttonHelp.setPosition(buttonX,100);
+        buttonHelp.addListener(new ClickListener(){
+            @Override
+                public void clicked(InputEvent event, float x, float y){
+            }
+        });
 
+        stage.addActor(buttonHelp);
     }
 
 
@@ -48,6 +67,8 @@ public class Homepage implements Screen {
         batch.begin();
         batch.draw(backgroundTexture, 0, 0);
         batch.end();
+        stage.act();
+        stage.draw();
     }
 
     @Override
