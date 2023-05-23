@@ -1,11 +1,19 @@
 apply plugin: 'application'
 
+repositories {
+  maven {
+    url 'https://repo.clojars.org'
+    name 'Clojars'
+  }
+}
+
 sourceCompatibility = 17
 mainClassName = 'com.duszki.blackjack.server.ServerLauncher'
 eclipse.project.name = appName + '-server'
 
 dependencies {
-  implementation project(':shared')
+  api 'kryonet:kryonet-all:2.21'
+    implementation project(':shared')
 }
 
 jar {

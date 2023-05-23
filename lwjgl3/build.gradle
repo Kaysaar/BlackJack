@@ -1,3 +1,9 @@
+repositories {
+  maven {
+    url 'https://repo.clojars.org'
+    name 'Clojars'
+  }
+}
 buildscript {
   repositories {
     gradlePluginPortal()
@@ -23,7 +29,8 @@ eclipse.project.name = appName + '-lwjgl3'
 sourceCompatibility = 17
 
 dependencies {
-  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  api 'kryonet:kryonet-all:2.21'
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
   implementation project(':core')
 }

@@ -1,5 +1,12 @@
+repositories {
+  maven {
+    url 'https://repo.clojars.org'
+    name 'Clojars'
+  }
+}
 eclipse.project.name = appName + '-shared'
 
 dependencies {
 
+api 'kryonet:kryonet-all:2.21'
 }
