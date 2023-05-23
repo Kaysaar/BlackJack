@@ -2,6 +2,8 @@ package Card;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import static Card.Type.*;
 
@@ -15,6 +17,7 @@ public class Deck {
         addCards(Hearts);
         addCards(Diamonds);
         addCards(Clubs);
+        Collections.shuffle(deck);
     }
 
     void addCards(Type colors){
