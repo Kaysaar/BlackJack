@@ -58,6 +58,7 @@ public class Homepage implements Screen {
         buttonSetting.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
+
             }
         });
         //Buttton help
@@ -68,6 +69,7 @@ public class Homepage implements Screen {
         buttonHelp.addListener(new ClickListener(){
             @Override
                 public void clicked(InputEvent event, float x, float y){
+                stage.clear();
             }
         });
         //Button quit
@@ -77,11 +79,9 @@ public class Homepage implements Screen {
         buttonQuit.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
+                Gdx.app.exit();
             }
         });
-
-
-
 
         stage.addActor(buttonPlay);
         stage.addActor(buttonHelp);
