@@ -3,14 +3,13 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.duszki.blackjack.server.Network;
-import com.duszki.blackjack.server.Network.RegisterName;
-import com.duszki.blackjack.server.Network.UpdateNames;
-import com.duszki.blackjack.server.Network.ChatMessage;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 /** Launches the server application. */
@@ -31,54 +30,15 @@ public class ServerLauncher {
 
         server.addListener(new Listener() {
             public void received (Connection c, Object object) {
-                // We know all connections for this server are actually ChatConnections.
+                //Sending back Ping to client
                 ServerConnettion connection = (ServerConnettion)c;
 
-                if (object instanceof Network.RegisterName) {
-                    // Ignore the object if a client has already registered a name. This is
-                    // impossible with our client, but a hacker could send messages at any time.
-                    if (connection.name != null) return;
-                    // Ignore the object if the name is invalid.
-                    String name = ((Network.RegisterName)object).name;
-                    if (name == null) return;
-                    name = name.trim();
-                    if (name.length() == 0) return;
-                    // Store the name on the connection.
-                    connection.name = name;
-                    // Send a "connected" message to everyone except the new client.
-                    Network.ChatMessage chatMessage = new Network.ChatMessage();
-                    chatMessage.text = name + " connected.";
-                    server.sendToAllExceptTCP(connection.getID(), chatMessage);
-                    // Send everyone a new list of connection names.
-                    updateNames();
-                    return;
+                if (object instanceof Network.reqPing) {
+                    Network.Ping chatMessage = new Network.Ping();
+                    chatMessage.pingTime = LocalDateTime.now();
+                    server.sendToTCP(connection.getID(), chatMessage);
                 }
 
-                if (object instanceof ChatMessage) {
-                    // Ignore the object if a client tries to chat before registering a name.
-                    if (connection.name == null) return;
-                    ChatMessage chatMessage = (ChatMessage)object;
-                    // Ignore the object if the chat message is invalid.
-                    String message = chatMessage.text;
-                    if (message == null) return;
-                    message = message.trim();
-                    if (message.length() == 0) return;
-                    // Prepend the connection's name and send to everyone.
-                    chatMessage.text = connection.name + ": " + message;
-                    server.sendToAllTCP(chatMessage);
-                    return;
-                }
-            }
-
-            public void disconnected (Connection c) {
-                ServerConnettion connection = (ServerConnettion)c;
-                if (connection.name != null) {
-                    // Announce to everyone that someone (with a registered name) has left.
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.text = connection.name + " disconnected.";
-                    server.sendToAllTCP(chatMessage);
-                    updateNames();
-                }
             }
         });
         server.bind(Network.port);
@@ -97,18 +57,7 @@ public class ServerLauncher {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-    void updateNames () {
-        Connection[] connections = server.getConnections();
-        ArrayList names = new ArrayList(connections.length);
-        for (int i = connections.length - 1; i >= 0; i--) {
-            ServerConnettion connection = (ServerConnettion) connections[i];
-            names.add(connection.name);
-        }
-        // Send the names to everyone.
-        UpdateNames updateNames = new UpdateNames();
-        updateNames.names = (String[])names.toArray(new String[names.size()]);
-        server.sendToAllTCP(updateNames);
-    }
+
 
     static class ServerConnettion extends Connection {
         public String name;
