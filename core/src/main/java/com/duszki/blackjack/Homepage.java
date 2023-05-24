@@ -1,18 +1,14 @@
 package com.duszki.blackjack;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -28,6 +24,9 @@ public class Homepage implements Screen {
     private FitViewport viewport;
 
     private TextureRegionDrawable help;
+    private TextureRegionDrawable play;
+    private TextureRegionDrawable quit;
+    private TextureRegionDrawable setting;
 
 
     public Homepage() {
@@ -39,19 +38,55 @@ public class Homepage implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
-        help = new TextureRegionDrawable(new Texture("skins/Help.png"));
 
+
+
+        // Button play
+        play = new TextureRegionDrawable(new Texture("skins/Play.png"));
+        ImageButton buttonPlay = new ImageButton(play);
+        float buttonX = (Gdx.graphics.getWidth() - buttonPlay.getWidth()) / 2f;
+        buttonPlay.setPosition(buttonX,500);
+        buttonPlay.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+            }
+        });
+        //Button setting
+        setting = new TextureRegionDrawable(new Texture("skins/Setting.png"));
+        ImageButton buttonSetting = new ImageButton(setting);
+        buttonSetting.setPosition(buttonX,400);
+        buttonSetting.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+            }
+        });
+        //Buttton help
+        help = new TextureRegionDrawable(new Texture("skins/Help.png"));
         ImageButton buttonHelp = new ImageButton(help);
-        buttonHelp.setSize(100,100);
-        float buttonX = (Gdx.graphics.getWidth() - buttonHelp.getWidth()) / 2f;
-        buttonHelp.setPosition(buttonX,100);
+
+        buttonHelp.setPosition(buttonX,300);
         buttonHelp.addListener(new ClickListener(){
             @Override
                 public void clicked(InputEvent event, float x, float y){
             }
         });
+        //Button quit
+        quit = new TextureRegionDrawable(new Texture("skins/Quit.png"));
+        ImageButton buttonQuit = new ImageButton(quit);
+        buttonQuit.setPosition(buttonX,200);
+        buttonQuit.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+            }
+        });
 
+
+
+
+        stage.addActor(buttonPlay);
         stage.addActor(buttonHelp);
+        stage.addActor(buttonQuit);
+        stage.addActor(buttonSetting);
     }
 
 
