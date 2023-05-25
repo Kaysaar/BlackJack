@@ -1,13 +1,19 @@
 package com.duszki.blackjack;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.Audio.*;
+import com.badlogic.gdx.Gdx.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -22,12 +28,11 @@ public class Homepage implements Screen {
     private Texture backgroundTexture;
     private OrthographicCamera camera;
     private FitViewport viewport;
-
     private TextureRegionDrawable help;
     private TextureRegionDrawable play;
     private TextureRegionDrawable quit;
     private TextureRegionDrawable setting;
-
+    private TextureRegionDrawable instruction1;
 
     public Homepage() {
 
@@ -39,16 +44,20 @@ public class Homepage implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
 
-
-
         // Button play
         play = new TextureRegionDrawable(new Texture("skins/Play.png"));
         ImageButton buttonPlay = new ImageButton(play);
-        float buttonX = (Gdx.graphics.getWidth() - buttonPlay.getWidth()) / 2f;
+        float buttonX = ((Gdx.graphics.getWidth() - buttonPlay.getWidth()) / 2f);
         buttonPlay.setPosition(buttonX,500);
+
+        instruction1 = new TextureRegionDrawable(new Texture("skins/Insttruction1.png"));
+        ImageButton ins1 = new ImageButton(instruction1);
+        ins1.setPosition(((Gdx.graphics.getWidth() - ins1.getWidth()) / 2f),400);
+
         buttonPlay.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
+
             }
         });
         //Button setting
@@ -70,6 +79,9 @@ public class Homepage implements Screen {
             @Override
                 public void clicked(InputEvent event, float x, float y){
                 stage.clear();
+                stage.addActor(ins1);
+                stage.act();
+
             }
         });
         //Button quit
@@ -82,6 +94,9 @@ public class Homepage implements Screen {
                 Gdx.app.exit();
             }
         });
+
+
+
 
         stage.addActor(buttonPlay);
         stage.addActor(buttonHelp);
@@ -134,6 +149,5 @@ public class Homepage implements Screen {
     public void dispose() {
         stage.dispose();
         batch.dispose();
-
     }
 }

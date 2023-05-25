@@ -22,7 +22,7 @@ public class Lwjgl3Launcher {
         //// Limits FPS to the refresh rate of the currently active monitor.
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
         configuration.setWindowedMode(1600, 1200);
-      // configuration.setResizable(false);
+        configuration.setResizable(false);
         configuration.setMaximized(true);
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
         return configuration;
