@@ -2,7 +2,8 @@ package com.duszki.blackjack.server.Card;
 
 public class Card {
     private final int id;
-    private final int value;
+
+    private int value;
     private final Type color;
 
     public Card(int  id, int value, Type color){
@@ -19,5 +20,8 @@ public class Card {
     }
     public int getId() {
         return id;
+    }
+    public void setValue(int value) {
+        this.value = value;
     }
 }
