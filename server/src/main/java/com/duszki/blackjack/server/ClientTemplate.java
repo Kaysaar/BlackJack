@@ -15,7 +15,7 @@ public class ClientTemplate {
     public static void main(String[] args) throws IOException {
         Client client = new Client();
         client.start();
-        client.connect(5000, "192.168.0.4", 54555);
+        client.connect(5000, "localhost", 54555);
         Network.reqPing request = new Network.reqPing();
         request.requested = true;
         client.sendTCP(request);
