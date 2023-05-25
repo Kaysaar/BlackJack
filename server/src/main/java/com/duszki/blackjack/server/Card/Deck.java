@@ -20,8 +20,12 @@ public class Deck {
     }
 
     void addCards(Type colors){
-        for (int i = 1; i < 14; i++) {
-            Card card = new Card(i,colors);
+        for (int i = 1; i < 11; i++) {
+            Card card = new Card(i,i,colors);
+            deck.add(card);
+        }
+        for (int i = 11; i < 14; i++) {
+            Card card = new Card(i,STRONGCARD,colors);
             deck.add(card);
         }
     }
