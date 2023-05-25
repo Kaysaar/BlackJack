@@ -28,11 +28,13 @@ public class Homepage implements Screen {
     private Texture backgroundTexture;
     private OrthographicCamera camera;
     private FitViewport viewport;
-    private TextureRegionDrawable help;
-    private TextureRegionDrawable play;
-    private TextureRegionDrawable quit;
-    private TextureRegionDrawable setting;
-    private TextureRegionDrawable instruction1;
+
+    private ImageButton buttonPlay;
+    private ImageButton buttonSetting;
+    private ImageButton buttonHelp;
+    private ImageButton ins1;
+    private ImageButton buttonQuit;
+
 
     public Homepage() {
 
@@ -45,58 +47,29 @@ public class Homepage implements Screen {
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
 
         // Button play
-        play = new TextureRegionDrawable(new Texture("skins/Play.png"));
-        ImageButton buttonPlay = new ImageButton(play);
+        TextureRegionDrawable play = new TextureRegionDrawable(new Texture("skins/Play.png"));
+        buttonPlay = new ImageButton(play);
         float buttonX = ((Gdx.graphics.getWidth() - buttonPlay.getWidth()) / 2f);
         buttonPlay.setPosition(buttonX,500);
 
-        instruction1 = new TextureRegionDrawable(new Texture("skins/Insttruction1.png"));
-        ImageButton ins1 = new ImageButton(instruction1);
+        //Button setting
+        TextureRegionDrawable  setting = new TextureRegionDrawable(new Texture("skins/Setting.png"));
+        buttonSetting = new ImageButton(setting);
+        buttonSetting.setPosition(buttonX,400);
+
+        //Buttton help
+        TextureRegionDrawable  help = new TextureRegionDrawable(new Texture("skins/Help.png"));
+        buttonHelp = new ImageButton(help);
+        buttonHelp.setPosition(buttonX,300);
+
+        TextureRegionDrawable  instruction1 = new TextureRegionDrawable(new Texture("skins/Insttruction1.png"));
+        ins1 = new ImageButton(instruction1);
         ins1.setPosition(((Gdx.graphics.getWidth() - ins1.getWidth()) / 2f),400);
 
-        buttonPlay.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-
-            }
-        });
-        //Button setting
-        setting = new TextureRegionDrawable(new Texture("skins/Setting.png"));
-        ImageButton buttonSetting = new ImageButton(setting);
-        buttonSetting.setPosition(buttonX,400);
-        buttonSetting.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-
-            }
-        });
-        //Buttton help
-        help = new TextureRegionDrawable(new Texture("skins/Help.png"));
-        ImageButton buttonHelp = new ImageButton(help);
-
-        buttonHelp.setPosition(buttonX,300);
-        buttonHelp.addListener(new ClickListener(){
-            @Override
-                public void clicked(InputEvent event, float x, float y){
-                stage.clear();
-                stage.addActor(ins1);
-                stage.act();
-
-            }
-        });
         //Button quit
-        quit = new TextureRegionDrawable(new Texture("skins/Quit.png"));
-        ImageButton buttonQuit = new ImageButton(quit);
+        TextureRegionDrawable quit = new TextureRegionDrawable(new Texture("skins/Quit.png"));
+        buttonQuit = new ImageButton(quit);
         buttonQuit.setPosition(buttonX,200);
-        buttonQuit.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                Gdx.app.exit();
-            }
-        });
-
-
-
 
         stage.addActor(buttonPlay);
         stage.addActor(buttonHelp);
@@ -113,6 +86,36 @@ public class Homepage implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 0);
+        buttonPlay.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+
+            }
+        });
+        buttonSetting.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                stage.clear();
+            }
+        });
+
+        buttonHelp.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                stage.clear();
+                stage.addActor(ins1);
+                stage.act();
+
+            }
+        });
+
+        buttonQuit.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                Gdx.app.exit();
+            }
+        });
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(backgroundTexture, 0, 0);
