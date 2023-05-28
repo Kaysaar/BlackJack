@@ -3,6 +3,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.duszki.blackjack.server.Network;
+import com.esotericsoftware.minlog.Log;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -34,9 +35,10 @@ public class ServerLauncher {
                 ServerConnettion connection = (ServerConnettion)c;
 
                 if (object instanceof Network.reqPing) {
-                    Network.Ping chatMessage = new Network.Ping();
-                    chatMessage.pingTime = LocalDateTime.now();
-                    server.sendToTCP(connection.getID(), chatMessage);
+                    Network.Ping response = new Network.Ping();
+                    response.pingTime = LocalDateTime.now();
+                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client");
+                    server.sendToTCP(connection.getID(), response);
                 }
 
             }
