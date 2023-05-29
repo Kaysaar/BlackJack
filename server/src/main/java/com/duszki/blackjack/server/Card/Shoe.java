@@ -3,12 +3,35 @@ package com.duszki.blackjack.server.Card;
 import java.util.ArrayList;
 
 public class Shoe {
-    private ArrayList<Deck> shoe = new ArrayList<>();
+    private ArrayList<Deck> deckList = new ArrayList<>();
 
     public Shoe(){
-        for(int i = 0; i < 8; i++){
+        int deckQuantity = 8;
+        for(int i = 0; i < deckQuantity; i++){
             Deck deck = new Deck();
-            shoe.add(deck);
+            deckList.add(deck);
         }
     }
+    Deck getFirstAvailableDeck(){
+        if(deckList.isEmpty()){
+            return null;
+        }
+        return deckList.get(0);
+
+    }
+    void removeEmptyDeck(Deck currDeck){
+        if(currDeck.getCardsInsideDeck().isEmpty()){
+            deckList.remove(currDeck);
+        }
+    }
+    public Deck replaceDeckIfNeeded(Deck currDeck){
+        removeEmptyDeck(currDeck);
+        if(deckList.isEmpty()){
+            return null;
+        }
+        return getFirstAvailableDeck();
+    }
+
+
+
 }
