@@ -135,12 +135,12 @@ public class Homepage implements Screen {
 
     @Override
     public void pause() {
-
+        music.pause();
     }
 
     @Override
     public void resume() {
-
+        music.play();
     }
 
     @Override
@@ -152,5 +152,6 @@ public class Homepage implements Screen {
     public void dispose() {
         stage.dispose();
         batch.dispose();
+        music.dispose();
     }
 }
