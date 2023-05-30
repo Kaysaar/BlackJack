@@ -1,21 +1,34 @@
 package com.duszki.blackjack.server;
+import com.duszki.blackjack.server.Card.Hand;
+import com.duszki.blackjack.server.Card.Shoe;
+import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import com.duszki.blackjack.server.Network;
 import com.esotericsoftware.minlog.Log;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 /** Launches the server application. */
 public class ServerLauncher {
     Server server;
+    HashMap<Integer,PlayerServerData> storedData = new HashMap<>();
+    int beginningValue=200;
+    boolean hasBegunSesion = false;
+    public boolean isRegistered(int connettion){
+        for (int Id : storedData.keySet()) {
+            if(Id==connettion){
+                return true;
+            }
+        }
+        return false;
+    }
+    Shoe allDecks = new Shoe();
     public ServerLauncher () throws IOException {
         server = new Server() {
             protected Connection newConnection () {
@@ -30,15 +43,38 @@ public class ServerLauncher {
         Network.register(server);
 
         server.addListener(new Listener() {
+
             public void received (Connection c, Object object) {
                 //Sending back Ping to client
-                ServerConnettion connection = (ServerConnettion)c;
 
+                ServerConnettion connection = (ServerConnettion)c;
+                if(!isRegistered(connection.getID())){
+                    PlayerServerData playerData  = new PlayerServerData();
+                    playerData.setCoins(beginningValue);
+                    playerData.setPlayerHand(new Hand());
+                    playerData.getPlayerHand().setPoints(20);
+                    storedData.put(connection.getID(),playerData);
+
+                }
                 if (object instanceof Network.reqPing) {
-                    Network.Ping response = new Network.Ping();
-                    response.pingTime = LocalDateTime.now();
-                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client");
+                   PlayerServerData response = storedData.get(connection.getID());
+                   Log.info("BLACKJACK-SERVER","Ping has been requested by Client, sending client data");
+                   server.sendToTCP(connection.getID(), response);
+
+                }
+                if (object instanceof Network.increasePoints) {
+                    PlayerServerData response = storedData.get(connection.getID());
+                    response.getPlayerHand().setPoints(response.getPlayerHand().getPoints()+10);
+                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, increasing points on hand by 10 ");
                     server.sendToTCP(connection.getID(), response);
+
+                }
+                if (object instanceof Network.increaseCash) {
+                    PlayerServerData response = storedData.get(connection.getID());
+                    response.setCoins(response.getCoins()+10);
+                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, increasing amount of cash by 10");
+                    server.sendToTCP(connection.getID(), response);
+
                 }
 
             }
