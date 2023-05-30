@@ -2,6 +2,8 @@ package com.duszki.blackjack.server;
 
 //Template to be used in futher develompent
 
+import com.duszki.blackjack.server.Player.Player;
+import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -15,26 +17,29 @@ public class ClientTemplate implements Runnable {
 
 
     public static void main(String[] args) throws IOException {
-        Client client = new Client();
+         Player player = Player.init();
         ClientTemplate clientTemplate = new ClientTemplate();
         Thread inputListener = new Thread(clientTemplate);
 
-        Network.register(client);
-        client.addListener(new Listener() {
+        Network.register(player.getClient());
+        player.getClient().addListener(new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof Network.Ping response) {
-                    System.out.println("Ping has been recived at " + response.pingTime.getHour() + ":" + response.pingTime.getMinute() + ":" + response.pingTime.getSecond());
+                if (object instanceof PlayerServerData playerServerData) {
+                    player.setPlayerServerData(playerServerData);
+                    System.out.println("Current amount of coins "+player.getPlayerServerData().getCoins());
+                    System.out.println("\nCurrent amount of points in that round "+player.getPlayerServerData().getPlayerHand().getPoints());
                 }
             }
         });
-        client.start();
-        client.connect(40000, "localhost", Network.port);
+        player.getClient().start();
+        player.getClient().connect(40000, "localhost", Network.port);
         inputListener.start();
         Network.reqPing request = new Network.reqPing();
         request.requested = true;
-        client.sendTCP(request);
-
-        while (client.isConnected()) {
+        player.getClient().sendTCP(request);
+        Network.increasePoints requestIncreasePoints = new Network.increasePoints();
+        Network.increaseCash requestIncreaseCash = new Network.increaseCash();
+        while (player.getClient().isConnected()) {
             if (requestType == null) {
                 continue;
             }
@@ -42,7 +47,15 @@ public class ClientTemplate implements Runnable {
                 break;
             }
             if (requestType.equals("q")) {
-                client.sendTCP(request);
+                player.getClient().sendTCP(request);
+                requestType="";
+            }
+            if (requestType.equals("ip")) {
+                player.getClient().sendTCP(requestIncreasePoints);
+                requestType="";
+            }
+            if (requestType.equals("ic")) {
+                player.getClient().sendTCP(requestIncreaseCash);
                 requestType="";
             }
 
@@ -65,6 +78,12 @@ public class ClientTemplate implements Runnable {
             }
             if (firstName.equals("q")) {
                 requestType = "q";
+            }
+            if (firstName.equals("ip")) {
+                requestType = "ip";
+            }
+            if (firstName.equals("ic")) {
+                requestType = "ic";
             }
         }
         scan.close();
