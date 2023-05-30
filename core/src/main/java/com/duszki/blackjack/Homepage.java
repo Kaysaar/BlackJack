@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.audio.Music;
 
 public class Homepage implements Screen {
     private Stage stage;
@@ -28,6 +29,7 @@ public class Homepage implements Screen {
     private ImageButton ins1;
     private ImageButton buttonQuit;
 
+    private Music music;
 
     public Homepage() {
 
@@ -38,6 +40,11 @@ public class Homepage implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
+
+        // Music
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/Kevin MacLeod - George Street Shuffle.ogg"));
+        music.setLooping(true);
+        music.play();
 
         // Button play
         TextureRegionDrawable play = new TextureRegionDrawable(new Texture("skins/Play.png"));
@@ -128,12 +135,12 @@ public class Homepage implements Screen {
 
     @Override
     public void pause() {
-
+        music.pause();
     }
 
     @Override
     public void resume() {
-
+        music.play();
     }
 
     @Override
@@ -145,5 +152,6 @@ public class Homepage implements Screen {
     public void dispose() {
         stage.dispose();
         batch.dispose();
+        music.dispose();
     }
 }
