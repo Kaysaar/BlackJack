@@ -47,29 +47,50 @@ public class Homepage implements Screen {
         music.play();
 
         // Button play
-        TextureRegionDrawable play = new TextureRegionDrawable(new Texture("skins/Play.png"));
+        Skin play = new Skin(Gdx.files.internal("skins/Play/PlayButton.json"));
         buttonPlay = new ImageButton(play);
         float buttonX = ((Gdx.graphics.getWidth() - buttonPlay.getWidth()) / 2f);
         buttonPlay.setPosition(buttonX,500);
+        buttonPlay.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+
+            }
+        });
 
         //Button setting
-        TextureRegionDrawable  setting = new TextureRegionDrawable(new Texture("skins/Setting.png"));
+        Skin setting = new Skin(Gdx.files.internal("skins/Settings/SettingsButton.json"));
         buttonSetting = new ImageButton(setting);
         buttonSetting.setPosition(buttonX,400);
+        buttonSetting.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                stage.clear();
+            }
+        });
 
         //Buttton help
-        TextureRegionDrawable  help = new TextureRegionDrawable(new Texture("skins/Help.png"));
+        Skin help = new Skin(Gdx.files.internal("skins/Help/HelpButton.json"));
         buttonHelp = new ImageButton(help);
         buttonHelp.setPosition(buttonX,300);
+        buttonHelp.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
 
-        TextureRegionDrawable  instruction1 = new TextureRegionDrawable(new Texture("skins/Insttruction1.png"));
-        ins1 = new ImageButton(instruction1);
-        ins1.setPosition(((Gdx.graphics.getWidth() - ins1.getWidth()) / 2f),400);
+            }
+        });
 
         //Button quit
-        TextureRegionDrawable quit = new TextureRegionDrawable(new Texture("skins/Quit.png"));
+        Skin quit = new Skin(Gdx.files.internal("skins/Quit/QuitButton.json"));
         buttonQuit = new ImageButton(quit);
         buttonQuit.setPosition(buttonX,200);
+
+        buttonQuit.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                Gdx.app.exit();
+            }
+        });
 
         stage.addActor(buttonPlay);
         stage.addActor(buttonHelp);
@@ -86,35 +107,6 @@ public class Homepage implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 0);
-        buttonPlay.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-
-            }
-        });
-        buttonSetting.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                stage.clear();
-            }
-        });
-
-        buttonHelp.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                stage.clear();
-                stage.addActor(ins1);
-                stage.act();
-
-            }
-        });
-
-        buttonQuit.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                Gdx.app.exit();
-            }
-        });
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
