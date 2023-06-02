@@ -13,7 +13,7 @@ public class Blackjack extends Game {
 
     @Override
     public void create() {
-        homepage = new Homepage();
+        homepage = new Homepage(this);
         setScreen(homepage);
     }
     @Override
