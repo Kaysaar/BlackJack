@@ -29,7 +29,6 @@ public class Homepage implements Screen {
     private ImageButton buttonPlay;
     private ImageButton buttonSetting;
     private ImageButton buttonHelp;
-    private ImageButton ins1;
     private ImageButton buttonQuit;
     private Music music;
 
@@ -42,6 +41,8 @@ public class Homepage implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
+        Instruction instruction = new Instruction(this);
+        instruction.getTable().setPosition(((Gdx.graphics.getWidth() - instruction.getTable().getWidth()) / 2f),300);
 
         // Music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Kevin MacLeod - George Street Shuffle.ogg"));
@@ -80,10 +81,8 @@ public class Homepage implements Screen {
         buttonHelp.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                stage.clear();
-                stage.addActor(ins1);
-                stage.act();
-
+            stage.clear();
+            stage.addActor(instruction.getTable());
             }
         });
 
@@ -97,7 +96,6 @@ public class Homepage implements Screen {
                 Gdx.app.exit();
             }
         });
-
         stage.addActor(buttonPlay);
         stage.addActor(buttonHelp);
         stage.addActor(buttonQuit);
@@ -105,9 +103,14 @@ public class Homepage implements Screen {
     }
 
 
+
     @Override
     public void show() {
-
+        stage.clear();
+        stage.addActor(buttonPlay);
+        stage.addActor(buttonHelp);
+        stage.addActor(buttonQuit);
+        stage.addActor(buttonSetting);
     }
 
     @Override

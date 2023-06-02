@@ -25,6 +25,8 @@ configure(subprojects) {
   compileJava {
     options.incremental = true
   }
+
+
 }
 
 subprojects {
