@@ -14,7 +14,7 @@ public class Loading implements Screen {
 
     public Loading(Game game){
         this.game = game;
-        skin = new Skin(Gdx.files.internal(""));
+        skin = new Skin(Gdx.files.internal("Loading/skins.json"));
 
 
     }
