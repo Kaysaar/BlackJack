@@ -1,6 +1,7 @@
 package com.duszki.blackjack;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -12,7 +13,8 @@ public class Loading implements Screen {
 
 
     public Loading(Game game){
-
+        this.game = game;
+        skin = new Skin(Gdx.files.internal(""));
 
 
     }
