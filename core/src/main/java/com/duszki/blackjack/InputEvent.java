@@ -1,12 +1,16 @@
 package com.duszki.blackjack;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
 public class InputEvent implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        if(keycode == Input.Keys.ESCAPE){
+            Gdx.app.exit();
+        }
+        return true;
     }
 
     @Override
