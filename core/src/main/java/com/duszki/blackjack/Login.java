@@ -40,7 +40,7 @@ public class Login {
         imageButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new Board(game));
+                game.setScreen(new Loading(game));
             }
         });
 
@@ -58,6 +58,8 @@ public class Login {
     public Table getTable() {
         return table;
     }
+
+
 
 
 }

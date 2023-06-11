@@ -26,7 +26,6 @@ public class Homepage implements Screen {
     private Texture backgroundTexture;
     private OrthographicCamera camera;
     private FitViewport viewport;
-
     private ImageButton buttonPlay;
     private ImageButton buttonSetting;
     private ImageButton buttonHelp;
