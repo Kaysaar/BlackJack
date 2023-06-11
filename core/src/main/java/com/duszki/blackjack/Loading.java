@@ -11,6 +11,12 @@ public class Loading implements Screen {
     private Skin skin;
 
 
+    public Loading(Game game){
+
+
+
+    }
+
     @Override
     public void show() {
 
