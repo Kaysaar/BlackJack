@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Loading implements Screen {
     private Stage stage;
@@ -15,6 +16,7 @@ public class Loading implements Screen {
     public Loading(Game game){
         this.game = game;
         skin = new Skin(Gdx.files.internal("Loading/skins.json"));
+        stage = new Stage(new ScreenViewport());
 
 
     }
