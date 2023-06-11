@@ -1,8 +1,14 @@
 package com.duszki.blackjack;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Loading implements Screen {
+    private Stage stage;
+    private Game game;
+    private Skin skin;
 
 
     @Override
