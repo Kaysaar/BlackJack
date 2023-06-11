@@ -1,5 +1,5 @@
 
-SettingsButton.png
+QuitButton.png
 size: 1024, 1024
 format: RGBA8888
 filter: Linear, Linear
@@ -248,21 +248,21 @@ xp-bg
   orig: 21, 9
   offset: 0, 0
   index: -1
-Setting
+Quit
   rotate: false
   xy: 1, 150
   size: 276, 90
   orig: 276, 90
   offset: 0, 0
   index: -1
-SettingOver
+QuitOver
   rotate: false
   xy: 650, 539
   size: 276, 90
   orig: 276, 90
   offset: 0, 0
   index: -1
-SettingPressed
+QuitPressed
   rotate: false
   xy: 1, 58
   size: 276, 90

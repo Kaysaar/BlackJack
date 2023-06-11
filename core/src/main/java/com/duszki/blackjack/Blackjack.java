@@ -10,10 +10,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Blackjack extends Game {
     private Homepage homepage;
+    private Board board;
+    private Game game;
 
     @Override
     public void create() {
-        homepage = new Homepage();
+        game = this;
+        homepage = new Homepage(this);
         setScreen(homepage);
     }
     @Override
