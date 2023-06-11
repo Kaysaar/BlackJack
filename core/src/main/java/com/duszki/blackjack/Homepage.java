@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.audio.Music;
@@ -44,6 +45,11 @@ public class Homepage implements Screen {
         Instruction instruction = new Instruction(this);
         instruction.getTable().setPosition(((Gdx.graphics.getWidth() - instruction.getTable().getWidth()) / 2f),300);
         instruction.getTable().setSize(1500,800);
+        Login login = new Login(this, game);
+        login.getTable().setPosition(((Gdx.graphics.getWidth() - login.getTable().getWidth()) / 2f),300);
+
+
+
 
         // Music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Kevin MacLeod - George Street Shuffle.ogg"));
@@ -59,7 +65,8 @@ public class Homepage implements Screen {
         buttonPlay.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new Board(game));
+                stage.clear();
+                stage.addActor(login.getTable());
             }
         });
 
