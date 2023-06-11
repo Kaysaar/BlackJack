@@ -1,8 +1,6 @@
 package com.duszki.blackjack;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -32,15 +30,20 @@ public class Homepage implements Screen {
     private ImageButton buttonQuit;
     private Music music;
 
+
     public Homepage(Game game) {
         this.game =game;
         batch = new SpriteBatch();
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        Gdx.input.setInputProcessor(stage);
+        MyInputProcessor myInputProcessor = new MyInputProcessor();
+        InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor,stage);
+        Gdx.input.setInputProcessor(multiplexer);
         backgroundTexture = new Texture("homepage.jpg");
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
+
+
         Instruction instruction = new Instruction(this);
         instruction.getTable().setPosition(((Gdx.graphics.getWidth() - instruction.getTable().getWidth()) / 2f),300);
         instruction.getTable().setSize(1500,800);
