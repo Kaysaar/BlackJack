@@ -43,6 +43,7 @@ public class Homepage implements Screen {
         viewport = new FitViewport(backgroundTexture.getWidth(), backgroundTexture.getHeight(), camera);
         Instruction instruction = new Instruction(this);
         instruction.getTable().setPosition(((Gdx.graphics.getWidth() - instruction.getTable().getWidth()) / 2f),300);
+        instruction.getTable().setSize(1500,800);
 
         // Music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Kevin MacLeod - George Street Shuffle.ogg"));
@@ -58,7 +59,7 @@ public class Homepage implements Screen {
         buttonPlay.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-
+                game.setScreen(new Board(game));
             }
         });
 

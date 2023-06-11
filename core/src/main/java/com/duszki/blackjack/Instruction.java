@@ -22,7 +22,7 @@ public class Instruction {
         table.setSize(1500,800);
         table.pad(20f);
         ImageButton imageButton = new ImageButton(skin, "Next");
-        table.add(imageButton).size(100).expand().top().right().padLeft(1400);
+        table.add(imageButton).expand().top().right().padLeft(1400);
 
         imageButton.addListener(new ClickListener(){
 
@@ -41,7 +41,7 @@ public class Instruction {
         });
 
         ImageButton imageButton2 = new ImageButton(skin, "Cancel");
-        table.add(imageButton2).size(100).expandX().top().right().padRight(200);
+        table.add(imageButton2).expandX().top().right().padRight(200);
         imageButton2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
