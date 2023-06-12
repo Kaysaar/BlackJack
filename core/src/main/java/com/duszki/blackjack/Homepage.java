@@ -47,8 +47,12 @@ public class Homepage implements Screen {
         Instruction instruction = new Instruction(this);
         instruction.getTable().setPosition(((Gdx.graphics.getWidth() - instruction.getTable().getWidth()) / 2f),300);
         instruction.getTable().setSize(1500,800);
+
         Login login = new Login(this, game);
         login.getTable().setPosition(((Gdx.graphics.getWidth() - login.getTable().getWidth()) / 2f),300);
+
+        Setting setting2 = new Setting(this);
+        setting2.getTable().setPosition(((Gdx.graphics.getWidth() - setting2.getTable().getWidth()) / 2f),300);
 
 
 
@@ -80,6 +84,7 @@ public class Homepage implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 stage.clear();
+                stage.addActor(setting2.getTable());
             }
         });
 
