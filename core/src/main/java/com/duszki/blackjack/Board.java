@@ -1,15 +1,13 @@
 package com.duszki.blackjack;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Board implements Screen {
@@ -19,9 +17,12 @@ public class Board implements Screen {
 
     public Board(Game game) {
         this.game = game;
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         skin = new Skin(Gdx.files.internal("Board/skin.json"));
-        Gdx.input.setInputProcessor(stage);
+        MyInputProcessor myInputProcessor = new MyInputProcessor();
+        InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor,stage);
+        Gdx.input.setInputProcessor(multiplexer);
+
 
         Table table = new Table();
         table.setBackground(skin.getDrawable("Board1728x1117"));
