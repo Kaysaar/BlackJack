@@ -3,7 +3,7 @@ package com.duszki.blackjack.server;
 //Template to be used in futher develompent
 
 import com.duszki.blackjack.server.Player.Player;
-import com.duszki.blackjack.server.Player.PlayerServerData;
+import com.duszki.blackjack.server.Player.PlayerServerDataParser;
 import com.duszki.blackjack.server.Player.PlayerServerDataParser;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;

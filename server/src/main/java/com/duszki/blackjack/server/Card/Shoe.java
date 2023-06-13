@@ -30,6 +30,15 @@ public class Shoe {
         return getFirstAvailableDeck();
     }
 
-
+    public Card getCardFromShoe(){
+        Deck curentDeck = getFirstAvailableDeck();
+        if(curentDeck.getCardsInsideDeck().isEmpty()){
+            curentDeck = replaceDeckIfNeeded(getFirstAvailableDeck());
+        }
+        if(curentDeck==null){
+            return null;
+        }
+        return curentDeck.getCardFromDeck();
+    }
 
 }
