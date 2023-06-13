@@ -38,7 +38,7 @@ public class Shoe {
         if(curentDeck==null){
             return null;
         }
-        return curentDeck.getCardFromDeck();
+        return curentDeck.removeCard();
     }
 
 }

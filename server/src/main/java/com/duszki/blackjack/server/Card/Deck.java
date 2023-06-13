@@ -2,16 +2,17 @@ package com.duszki.blackjack.server.Card;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import static com.duszki.blackjack.server.Card.Type.*;
 
 public class Deck {
     public static final int STRONGCARD = 10;
-    public ArrayList<Card> getCardsInsideDeck() {
+    public LinkedList<Card> getCardsInsideDeck() {
         return cardsInsideDeck;
     }
 
-    private final ArrayList<Card> cardsInsideDeck = new ArrayList<>();
+    private final LinkedList<Card> cardsInsideDeck = new LinkedList<>();
 
     public Deck(){
         addCards(Spades);
@@ -35,13 +36,6 @@ public class Deck {
         if(cardsInsideDeck.isEmpty()){
             return null;
         }
-        return cardsInsideDeck.remove(0);
-    }
-
-    public Card getCardFromDeck(){
-        if(cardsInsideDeck.isEmpty()){
-            return null;
-        }
-        return cardsInsideDeck.get(0);
+        return cardsInsideDeck.poll();
     }
 }
