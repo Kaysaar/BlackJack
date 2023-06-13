@@ -80,8 +80,8 @@ public class Homepage implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
 
         Instruction instruction = new Instruction(this);
-        instruction.getTable().setPosition(((width - instruction.getTable().getWidth()) / 2f), 300);
-        instruction.getTable().setSize(1500, 800);
+        instruction.getTable().setPosition(((width - instruction.getTable().getWidth()) / 2f), 100);
+
 
         Login login = new Login(this, game);
         login.getTable().setPosition(((width - login.getTable().getWidth()) / 2f), 300);
@@ -167,7 +167,7 @@ public class Homepage implements Screen {
 
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
-        batch.draw(backgroundTexture, 0, 0);
+        batch.draw(backgroundTexture, 0, 0,width,height);
         batch.end();
         stage.act();
         stage.draw();
