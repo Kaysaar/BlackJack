@@ -29,6 +29,7 @@ public class Network {
         kryo.register(Hand.class);
         kryo.register(ArrayList.class);
         kryo.register(Network.increaseCash.class);
+        kryo.register(Network.decreaseCash.class);
         kryo.register(Network.increasePoints.class);
     }
 
@@ -44,5 +45,7 @@ public class Network {
     static public class increaseCash {
         public boolean requested;
     }
-
+    static public class decreaseCash {
+        public boolean requested;
+    }
 }

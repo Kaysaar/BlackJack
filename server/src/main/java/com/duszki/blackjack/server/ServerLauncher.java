@@ -76,6 +76,13 @@ public class ServerLauncher {
                     server.sendToTCP(connection.getID(), response);
 
                 }
+                if (object instanceof Network.decreaseCash) {
+                    PlayerServerData response = storedData.get(connection.getID());
+                    response.setCoins(response.getCoins() - 10);
+                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, decreasing amount of cash by 10");
+                    server.sendToTCP(connection.getID(), response);
+
+                }
 
             }
         });

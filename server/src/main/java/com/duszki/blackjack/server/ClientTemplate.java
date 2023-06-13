@@ -39,6 +39,7 @@ public class ClientTemplate implements Runnable {
         player.getClient().sendTCP(request);
         Network.increasePoints requestIncreasePoints = new Network.increasePoints();
         Network.increaseCash requestIncreaseCash = new Network.increaseCash();
+        Network.decreaseCash requestDecreaseCash = new Network.decreaseCash();
         while (player.getClient().isConnected()) {
             if (requestType == null) {
                 continue;
@@ -56,6 +57,10 @@ public class ClientTemplate implements Runnable {
             }
             if (requestType.equals("ic")) {
                 player.getClient().sendTCP(requestIncreaseCash);
+                requestType="";
+            }
+            if (requestType.equals("dc")) {
+                player.getClient().sendTCP(requestDecreaseCash);
                 requestType="";
             }
 
@@ -84,6 +89,9 @@ public class ClientTemplate implements Runnable {
             }
             if (firstName.equals("ic")) {
                 requestType = "ic";
+            }
+            if (firstName.equals("dc")) {
+                requestType = "dc";
             }
         }
         scan.close();
