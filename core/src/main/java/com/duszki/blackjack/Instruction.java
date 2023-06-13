@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 public class Instruction {
 
@@ -18,11 +19,11 @@ public class Instruction {
         skin = new Skin(Gdx.files.internal("Scene/Instruction1/Instruction1.json"));
         table = new Table();
         table.setBackground(skin.getDrawable("Instruction"));
-        table.center();
+        table.align(Align.topRight);
         table.setSize(1500,800);
         table.pad(20f);
         ImageButton imageButton = new ImageButton(skin, "Next");
-        table.add(imageButton).expand().top().right().padLeft(1400);
+        table.add(imageButton).top().right();
 
         imageButton.addListener(new ClickListener(){
 
@@ -41,7 +42,7 @@ public class Instruction {
         });
 
         ImageButton imageButton2 = new ImageButton(skin, "Cancel");
-        table.add(imageButton2).expandX().top().right().padRight(200);
+        table.add(imageButton2).top().right();
         imageButton2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
