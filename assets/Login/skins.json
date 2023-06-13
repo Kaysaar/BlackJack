@@ -1,5 +1,11 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	BlackFont: {
+		file: BlackFont.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
 	bold: {
 		file: font-bold-export.fnt
 		scaledSize: -1
@@ -8,6 +14,12 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	}
 	font: {
 		file: font-export.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	font1: {
+		file: font.fnt
 		scaledSize: -1
 		markupEnabled: false
 		flip: false
@@ -59,9 +71,19 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: {
-		imageUp: Setting
-		imageDown: SettingPressed
-		imageOver: SettingOver
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
+	Next: {
+		imageUp: Next
+		imageDown: NextDown
+		imageOver: NextOver
+	}
+	Cancel: {
+		imageUp: Cancel
+		imageDown: CancelDown
+		imageOver: CancelOver
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
@@ -74,7 +96,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: font
+		font: BlackFont
+		fontColor: white
 	}
 	dim: {
 		font: font
@@ -90,6 +113,22 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	xp: {
 		font: bold
 		fontColor: green
+	}
+	LogIn: {
+		font: BlackFont
+		fontColor: white
+	}
+	IPAdd: {
+		font: BlackFont
+		fontColor: white
+	}
+	Port: {
+		font: BlackFont
+		fontColor: white
+	}
+	Username: {
+		font: BlackFont
+		fontColor: white
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
@@ -147,10 +186,10 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: font
+		font: font1
 		fontColor: white
-		background: text-field
-		cursor: cursor
+		background: TextFieldBackGround
+		cursor: Cursor
 		selection: gray
 	}
 }
@@ -162,7 +201,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
-		background: window
+		background: Login
 		titleFont: font
 	}
 }

@@ -59,9 +59,19 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: {
-		imageUp: Setting
-		imageDown: SettingPressed
-		imageOver: SettingOver
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
+	Cancel: {
+		imageUp: Cancel
+		imageDown: CancelDown
+		imageOver: CancelOver
+	}
+	Next: {
+		imageUp: Next
+		imageDown: NextDown
+		imageOver: NextOver
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
