@@ -1,9 +1,6 @@
 package com.duszki.blackjack.server;
 
-import com.duszki.blackjack.server.Card.Card;
-import com.duszki.blackjack.server.Card.Deck;
-import com.duszki.blackjack.server.Card.Hand;
-import com.duszki.blackjack.server.Card.Shoe;
+import com.duszki.blackjack.server.Card.*;
 import com.duszki.blackjack.server.Player.Player;
 import com.duszki.blackjack.server.Player.PlayerServerDataParser;
 import com.esotericsoftware.kryonet.Connection;
@@ -60,7 +57,7 @@ public class ServerLauncher {
     }
 
     Shoe allDecks = new Shoe();
-
+    Dealer croupier = new Dealer();
     public ServerLauncher() throws IOException {
         server = new Server() {
             protected Connection newConnection() {
@@ -125,6 +122,9 @@ public class ServerLauncher {
                 }
                 if (object instanceof Network.RequestType) {
                     PlayerServerDataParser response = storedData.get(connection.getID());
+                    if (((Network.RequestType) object).request.equals(Request.HIT)) {
+                        response.getPlayerHand().addCard(allDecks.getCardFromShoe());
+                    }
                     if (((Network.RequestType) object).request.equals(Request.STAND)) {
                         response.requestedEndTurn = true;
                     }  if (((Network.RequestType) object).request.equals(Request.DOUBLE_DOWN)) {
@@ -202,9 +202,27 @@ public class ServerLauncher {
             Card toAssign = newDeck.removeCard();
             if (toAssign == null) {
                 allDecks.replaceDeckIfNeeded(newDeck);
+                toAssign = newDeck.removeCard();
             }
             value.getValue().getPlayerHand().addCard(toAssign);
+            toAssign = newDeck.removeCard();
+            if (toAssign == null) {
+                allDecks.replaceDeckIfNeeded(newDeck);
+                toAssign = newDeck.removeCard();
+            }
             value.getValue().getPlayerHand().addCard(toAssign);
+            toAssign = newDeck.removeCard();
+            if (toAssign == null) {
+                allDecks.replaceDeckIfNeeded(newDeck);
+                toAssign = newDeck.removeCard();
+            }
+            croupier.getPlayerHand().addCard(toAssign);
+            toAssign = newDeck.removeCard();
+            if (toAssign == null) {
+                allDecks.replaceDeckIfNeeded(newDeck);
+                toAssign = newDeck.removeCard();
+            }
+            croupier.getPlayerHand().addCard(toAssign);
             server.sendToTCP(value.getKey(), Response.BEGIN_GAME);
             server.sendToTCP(value.getKey(), value.getValue());
         }
