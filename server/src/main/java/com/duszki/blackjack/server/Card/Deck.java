@@ -31,4 +31,11 @@ public class Deck {
             cardsInsideDeck.add(card);
         }
     }
+
+    public Card getCardFromDeck(){
+        if(cardsInsideDeck.isEmpty()){
+            return null;
+        }
+        return cardsInsideDeck.get(0);
+    }
 }
