@@ -4,6 +4,7 @@ package com.duszki.blackjack.server;
 
 import com.duszki.blackjack.server.Player.Player;
 import com.duszki.blackjack.server.Player.PlayerServerData;
+import com.duszki.blackjack.server.Player.PlayerServerDataParser;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -24,7 +25,7 @@ public class ClientTemplate implements Runnable {
         Network.register(player.getClient());
         player.getClient().addListener(new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof PlayerServerData playerServerData) {
+                if (object instanceof PlayerServerDataParser playerServerData) {
                     player.setPlayerServerData(playerServerData);
                     System.out.println("Current amount of coins "+player.getPlayerServerData().getCoins());
                     System.out.println("\nCurrent amount of points in that round "+player.getPlayerServerData().getPlayerHand().getPoints());
@@ -34,9 +35,6 @@ public class ClientTemplate implements Runnable {
         player.getClient().start();
         player.getClient().connect(40000, "localhost", Network.port);
         inputListener.start();
-        Network.reqPing request = new Network.reqPing();
-        request.requested = true;
-        player.getClient().sendTCP(request);
         Network.increasePoints requestIncreasePoints = new Network.increasePoints();
         Network.increaseCash requestIncreaseCash = new Network.increaseCash();
         while (player.getClient().isConnected()) {
@@ -47,7 +45,6 @@ public class ClientTemplate implements Runnable {
                 break;
             }
             if (requestType.equals("q")) {
-                player.getClient().sendTCP(request);
                 requestType="";
             }
             if (requestType.equals("ip")) {

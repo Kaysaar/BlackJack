@@ -26,6 +26,8 @@ public class Network {
         kryo.register(ArrayList.class);
         kryo.register(Network.increaseCash.class);
         kryo.register(Network.increasePoints.class);
+        kryo.register(Network.decreaseCash.class);
+        kryo.register(Network.decreasePoints.class);
         kryo.register(Request.class);
         kryo.register(RequestType.class);
     }
@@ -33,6 +35,7 @@ public class Network {
     static public class Ping {
         public LocalDateTime pingTime;
     }
+
     static public class reqPlayerData {
         public boolean requested;
     }
@@ -40,6 +43,12 @@ public class Network {
         public boolean requested;
     }
     static public class increaseCash {
+        public boolean requested;
+    }
+    static public class decreaseCash {
+        public boolean requested;
+    }
+    static public class decreasePoints {
         public boolean requested;
     }
     static public class RequestType{
