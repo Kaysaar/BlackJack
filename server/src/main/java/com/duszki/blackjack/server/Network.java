@@ -31,6 +31,7 @@ public class Network {
         kryo.register(Network.increaseCash.class);
         kryo.register(Network.decreaseCash.class);
         kryo.register(Network.increasePoints.class);
+        kryo.register(Network.decreasePoints.class);
     }
 
     static public class Ping {
@@ -40,6 +41,9 @@ public class Network {
         public boolean requested;
     }
     static public class increasePoints {
+        public boolean requested;
+    }
+    static public class decreasePoints {
         public boolean requested;
     }
     static public class increaseCash {

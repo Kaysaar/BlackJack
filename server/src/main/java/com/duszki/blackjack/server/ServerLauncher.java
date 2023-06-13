@@ -69,6 +69,13 @@ public class ServerLauncher {
                     server.sendToTCP(connection.getID(), response);
 
                 }
+                if (object instanceof Network.decreasePoints) {
+                    PlayerServerData response = storedData.get(connection.getID());
+                    response.getPlayerHand().setPoints(response.getPlayerHand().getPoints()-10);
+                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, decreasing points on hand by 10 ");
+                    server.sendToTCP(connection.getID(), response);
+
+                }
                 if (object instanceof Network.increaseCash) {
                     PlayerServerData response = storedData.get(connection.getID());
                     response.setCoins(response.getCoins()+10);
