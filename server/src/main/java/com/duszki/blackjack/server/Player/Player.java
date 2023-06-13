@@ -1,6 +1,5 @@
 package com.duszki.blackjack.server.Player;
 
-import com.duszki.blackjack.server.Card.Hand;
 import com.esotericsoftware.kryonet.Client;
 
 public class Player {
@@ -10,11 +9,11 @@ public class Player {
 
     private Client client;
 
-    public void setPlayerServerData(PlayerServerData playerServerData) {
-        this.playerServerData = playerServerData;
+    public void setPlayerServerData(PlayerServerDataParser playerServerDataParser) {
+        this.playerServerDataParser = playerServerDataParser;
     }
 
-    private PlayerServerData playerServerData;
+    private PlayerServerDataParser playerServerDataParser;
 
     public static Player init(){
         Player player = new Player();
@@ -22,7 +21,7 @@ public class Player {
         return player;
     }
 
-    public PlayerServerData getPlayerServerData() {
-        return playerServerData;
+    public PlayerServerDataParser getPlayerServerData() {
+        return playerServerDataParser;
     }
 }

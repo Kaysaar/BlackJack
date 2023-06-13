@@ -20,15 +20,13 @@ public class Shoe {
 
     }
     void removeEmptyDeck(Deck currDeck){
+        if(currDeck==null) return;
         if(currDeck.getCardsInsideDeck().isEmpty()){
             deckList.remove(currDeck);
         }
     }
     public Deck replaceDeckIfNeeded(Deck currDeck){
         removeEmptyDeck(currDeck);
-        if(deckList.isEmpty()){
-            return null;
-        }
         return getFirstAvailableDeck();
     }
 

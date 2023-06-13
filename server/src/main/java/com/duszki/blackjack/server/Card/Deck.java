@@ -31,4 +31,10 @@ public class Deck {
             cardsInsideDeck.add(card);
         }
     }
+    public Card removeCard(){
+        if(cardsInsideDeck.isEmpty()){
+            return null;
+        }
+        return cardsInsideDeck.remove(0);
+    }
 }

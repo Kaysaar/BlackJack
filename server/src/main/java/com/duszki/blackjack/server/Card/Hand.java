@@ -19,7 +19,7 @@ public class Hand {
     public void setPoints(int points) {
         this.points = points;
     }
-    void addCard(Card card){
+    public void addCard(Card card){
         cardsInHand.add(card);
 
         if(card.getId()==1 && (this.points + 11 < 22)){
