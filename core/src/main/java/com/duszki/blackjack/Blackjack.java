@@ -22,20 +22,19 @@ public class Blackjack extends Game {
         setScreen(homepage);
     }
 
-//    @Override
-//    public void resize(int width, int height) {
-//
-//
-//    }
-//
-//    @Override
-//    public void render() {
-//        super.render();
-//    }
-//
-//    @Override
-//    public void dispose() {
-//        super.dispose();
-//        homepage.dispose();
-//    }
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+    }
+
+    @Override
+    public void render() {
+        super.render();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        homepage.dispose();
+    }
 }
