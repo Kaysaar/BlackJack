@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+/**
+ * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
+ */
 public class Blackjack extends Game {
     private Homepage homepage;
     private Board board;
@@ -19,19 +21,21 @@ public class Blackjack extends Game {
         homepage = new Homepage(this);
         setScreen(homepage);
     }
-    @Override
-    public void resize(int width, int height) {
 
-
-    }
-    @Override
-    public void render() {
-        super.render();
-    }
-
-    @Override
-    public void dispose() {
-    super.dispose();
-    homepage.dispose();
-    }
+//    @Override
+//    public void resize(int width, int height) {
+//
+//
+//    }
+//
+//    @Override
+//    public void render() {
+//        super.render();
+//    }
+//
+//    @Override
+//    public void dispose() {
+//        super.dispose();
+//        homepage.dispose();
+//    }
 }
