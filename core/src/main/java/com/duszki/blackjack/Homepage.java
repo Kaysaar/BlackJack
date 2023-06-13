@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -12,11 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.audio.Music;
 
 public class Homepage implements Screen {
+
+
 
     private Game game;
     private Stage stage;
@@ -28,15 +32,35 @@ public class Homepage implements Screen {
     private ImageButton buttonSetting;
     private ImageButton buttonHelp;
     private ImageButton buttonQuit;
+
+    private float Windth;
+    private float Height;
+
+
+    public InputMultiplexer getMultiplexer() {
+        return multiplexer;
+    }
+
+    private InputMultiplexer multiplexer;
+
     private Music music;
+    public Music getMusic() {
+        return music;
+    }
+    public Game getGame() {
+        return game;
+    }
 
 
     public Homepage(Game game) {
         this.game =game;
+        Windth = Gdx.graphics.getWidth();
+        Height = Gdx.graphics.getHeight();
+
         batch = new SpriteBatch();
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         MyInputProcessor myInputProcessor = new MyInputProcessor();
-        InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor,stage);
+        multiplexer = new InputMultiplexer(myInputProcessor,stage);
         Gdx.input.setInputProcessor(multiplexer);
         backgroundTexture = new Texture("homepage.jpg");
         camera = new OrthographicCamera();
@@ -143,6 +167,21 @@ public class Homepage implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+
+
+        if(!Gdx.graphics.isFullscreen()) {
+            float scale = Math.min(1600f / Windth, 1200f / Height);
+            Array<Actor> actors = stage.getActors();
+            for (Actor actor : actors) {
+                actor.setScale(scale);
+            }
+        }else
+        {
+            Array<Actor> actors = stage.getActors();
+            for (Actor actor : actors) {
+                actor.setScale(1);
+            }
+        }
         camera.setToOrtho(false, width, height);
         viewport.update(width, height, true);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
