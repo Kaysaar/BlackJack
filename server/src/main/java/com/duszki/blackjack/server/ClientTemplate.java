@@ -2,9 +2,14 @@ package com.duszki.blackjack.server;
 
 //Template to be used in futher develompent
 
+<<<<<<< Updated upstream
 import com.duszki.blackjack.server.Player.Player;
 import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryonet.Client;
+=======
+import com.duszki.blackjack.server.player.ServerPlayer;
+import com.duszki.blackjack.server.player.PlayerServerDataParser;
+>>>>>>> Stashed changes
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -17,29 +22,36 @@ public class ClientTemplate implements Runnable {
 
 
     public static void main(String[] args) throws IOException {
-         Player player = Player.init();
+         ServerPlayer serverPlayer = ServerPlayer.init();
         ClientTemplate clientTemplate = new ClientTemplate();
         Thread inputListener = new Thread(clientTemplate);
 
-        Network.register(player.getClient());
-        player.getClient().addListener(new Listener() {
+        Network.register(serverPlayer.getClient());
+        serverPlayer.getClient().addListener(new Listener() {
             public void received(Connection connection, Object object) {
+<<<<<<< Updated upstream
                 if (object instanceof PlayerServerData playerServerData) {
                     player.setPlayerServerData(playerServerData);
                     System.out.println("Current amount of coins "+player.getPlayerServerData().getCoins());
                     System.out.println("\nCurrent amount of points in that round "+player.getPlayerServerData().getPlayerHand().getPoints());
+=======
+                if (object instanceof PlayerServerDataParser playerServerData) {
+                    serverPlayer.setPlayerServerData(playerServerData);
+                    System.out.println("Current amount of coins "+ serverPlayer.getPlayerServerData().getCoins());
+                    System.out.println("\nCurrent amount of points in that round "+ serverPlayer.getPlayerServerData().getPlayerHand().getPoints());
+>>>>>>> Stashed changes
                 }
             }
         });
-        player.getClient().start();
-        player.getClient().connect(40000, "localhost", Network.port);
+        serverPlayer.getClient().start();
+        serverPlayer.getClient().connect(40000, "localhost", Network.port);
         inputListener.start();
         Network.reqPing request = new Network.reqPing();
         request.requested = true;
         player.getClient().sendTCP(request);
         Network.increasePoints requestIncreasePoints = new Network.increasePoints();
         Network.increaseCash requestIncreaseCash = new Network.increaseCash();
-        while (player.getClient().isConnected()) {
+        while (serverPlayer.getClient().isConnected()) {
             if (requestType == null) {
                 continue;
             }
@@ -51,11 +63,11 @@ public class ClientTemplate implements Runnable {
                 requestType="";
             }
             if (requestType.equals("ip")) {
-                player.getClient().sendTCP(requestIncreasePoints);
+                serverPlayer.getClient().sendTCP(requestIncreasePoints);
                 requestType="";
             }
             if (requestType.equals("ic")) {
-                player.getClient().sendTCP(requestIncreaseCash);
+                serverPlayer.getClient().sendTCP(requestIncreaseCash);
                 requestType="";
             }
 

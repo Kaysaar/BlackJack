@@ -1,11 +1,17 @@
 package com.duszki.blackjack.server;
 
+<<<<<<< Updated upstream
 import com.duszki.blackjack.server.Card.Card;
 import com.duszki.blackjack.server.Card.Deck;
 import com.duszki.blackjack.server.Card.Hand;
 import com.duszki.blackjack.server.Card.Shoe;
 import com.duszki.blackjack.server.Player.Player;
 import com.duszki.blackjack.server.Player.PlayerServerData;
+=======
+import com.duszki.blackjack.server.card.Card;
+import com.duszki.blackjack.server.card.Hand;
+import com.duszki.blackjack.server.player.PlayerServerDataParser;
+>>>>>>> Stashed changes
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Server;
