@@ -60,7 +60,7 @@ public class Setting {
             public void clicked(InputEvent event, float x, float y){
 
                 if(Gdx.graphics.isFullscreen()){
-                    Gdx.graphics.setWindowedMode(1600,1200);
+                    Gdx.graphics.setWindowedMode(1280,720);
                     Gdx.input.setInputProcessor(homepage.getMultiplexer());
                 }else {
                     Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
