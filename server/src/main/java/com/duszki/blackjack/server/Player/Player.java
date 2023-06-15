@@ -9,11 +9,11 @@ public class Player {
 
     private Client client;
 
-    public void setPlayerServerData(PlayerServerDataParser playerServerDataParser) {
-        this.playerServerDataParser = playerServerDataParser;
+    public void setPlayerServerData(PlayerServerData playerServerData) {
+        this.playerServerData = playerServerData;
     }
 
-    private PlayerServerDataParser playerServerDataParser;
+    private PlayerServerData playerServerData;
 
     public static Player init(){
         Player player = new Player();
@@ -21,7 +21,7 @@ public class Player {
         return player;
     }
 
-    public PlayerServerDataParser getPlayerServerData() {
-        return playerServerDataParser;
+    public PlayerServerData getPlayerServerData() {
+        return playerServerData;
     }
 }

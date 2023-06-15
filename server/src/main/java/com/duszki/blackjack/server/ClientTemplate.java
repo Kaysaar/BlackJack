@@ -3,9 +3,7 @@ package com.duszki.blackjack.server;
 //Template to be used in futher develompent
 
 import com.duszki.blackjack.server.Player.Player;
-import com.duszki.blackjack.server.Player.PlayerServerDataParser;
-import com.duszki.blackjack.server.Player.PlayerServerDataParser;
-import com.esotericsoftware.kryonet.Client;
+import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -25,7 +23,7 @@ public class ClientTemplate implements Runnable {
         Network.register(player.getClient());
         player.getClient().addListener(new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof PlayerServerDataParser playerServerData) {
+                if (object instanceof PlayerServerData playerServerData) {
                     player.setPlayerServerData(playerServerData);
                     System.out.println("Current amount of coins "+player.getPlayerServerData().getCoins());
                     System.out.println("\nCurrent amount of points in that round "+player.getPlayerServerData().getPlayerHand().getPoints());
@@ -44,11 +42,9 @@ public class ClientTemplate implements Runnable {
             if (requestType.equals("p")) {
                 break;
             }
-            if (requestType.equals("q")) {
-                requestType="";
-            }
             if (requestType.equals("ip")) {
                 player.getClient().sendTCP(requestIncreasePoints);
+
                 requestType="";
             }
             if (requestType.equals("ic")) {

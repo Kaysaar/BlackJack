@@ -4,22 +4,32 @@ import com.duszki.blackjack.server.Card.Hand;
 import com.duszki.blackjack.server.Request;
 import com.duszki.blackjack.server.Response;
 
-public class PlayerServerDataParser {
-    private Hand playerHand;
-    private int coins;
-    public String name ;
-    public boolean agreedToPLay = false;
+public class PlayerServerData {
 
-    public PlayerServerDataParser() {
+    private Connection connection;
+
+    private Hand playerHand;
+    public boolean agreedToPlay = false;
+    private int coins;
+    public String playerName;
+    public boolean hasLost;
+    public boolean hasStand = false;
+
+    public PlayerServerData(Connection connection, String playerName) {
+        this.connection = connection;
+        this.playerName = playerName;
+        this.playerHand = new Hand();
+        this.coins = 1000;
+        this.hasLost = false;
     }
-    public int currentTurn = 0;
+
+    public Connection getConnection() {
+        return this.connection;
+    }
 
     public Hand getPlayerHand() {
         return playerHand;
     }
-    public  Request requestType;
-    public Response serverResponseType;
-    public boolean requestedEndTurn = false;
 
     public void setPlayerHand(Hand playerHand) {
         this.playerHand = playerHand;

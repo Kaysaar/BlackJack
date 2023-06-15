@@ -2,7 +2,7 @@ package com.duszki.blackjack.server;
 
 import com.duszki.blackjack.server.Card.Card;
 import com.duszki.blackjack.server.Card.Hand;
-import com.duszki.blackjack.server.Player.PlayerServerDataParser;
+import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -20,7 +20,7 @@ public class Network {
         kryo.register(reqPlayerData.class);
         kryo.register(Date.class);
         kryo.register(Network.Ping.class);
-        kryo.register(PlayerServerDataParser.class);
+        kryo.register(PlayerServerData.class);
         kryo.register(Card.class);
         kryo.register(Hand.class);
         kryo.register(ArrayList.class);

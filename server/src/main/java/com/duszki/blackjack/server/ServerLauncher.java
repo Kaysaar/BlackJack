@@ -2,7 +2,7 @@ package com.duszki.blackjack.server;
 
 import com.duszki.blackjack.server.Card.*;
 import com.duszki.blackjack.server.Player.Player;
-import com.duszki.blackjack.server.Player.PlayerServerDataParser;
+import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -19,7 +19,11 @@ public class ServerLauncher {
     Server server;
     int turn = 0;
     Deck newDeck;
-    HashMap<Integer, PlayerServerDataParser> storedData = new HashMap<>();
+
+//    HashMap<Integer, PlayerServerData> storedData = new HashMap<>();
+    LinkedList<PlayerServerData> storedData = new LinkedList<>();
+
+
     static int beginningValue = 1000;
     static int points = 0;
     int currentTokensAtStake = 0;
@@ -27,34 +31,26 @@ public class ServerLauncher {
     boolean hasBegunSesion = false;
     boolean endTurn = false;
     boolean sesionEnded = false;
-    public Map.Entry<Integer,PlayerServerDataParser> winnerOfRound(){
-        Map.Entry<Integer, PlayerServerDataParser> winner = null;
-        for (Map.Entry<Integer, PlayerServerDataParser> contender : storedData.entrySet()) {
+    public PlayerServerData winnerOfRound(){
+      PlayerServerData winner = null;
+        for (PlayerServerData contender : storedData) {
             if(winner==null){
                 winner = contender;
                 continue;
             }
-            int distanceFrom21ForCurrWinner = Math.abs(21-winner.getValue().getPlayerHand().getPoints());
-            int distanceFrom21ForContender = Math.abs(21-contender.getValue().getPlayerHand().getPoints());
+            int distanceFrom21ForCurrWinner = Math.abs(21-winner.getPlayerHand().getPoints());
+            int distanceFrom21ForContender = Math.abs(21-contender.getPlayerHand().getPoints());
             if(distanceFrom21ForCurrWinner>distanceFrom21ForContender){
                 winner = contender;
             }
             if(distanceFrom21ForCurrWinner==distanceFrom21ForContender){
                 winner = null;
-                break;
             }
         }
         return winner;
     }
 
-    public boolean isRegistered(int connettion) {
-        for (int Id : storedData.keySet()) {
-            if (Id == connettion) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     Shoe allDecks = new Shoe();
     Dealer croupier = new Dealer();
@@ -71,96 +67,92 @@ public class ServerLauncher {
         // registered by the same method for both the client and server.
         Network.register(server);
 
-        server.addListener(new Listener() {
+//        server.addListener(new Listener() {
+//
+//            public void received(Connection c, Object object) {
+//                //Sending back Ping to client
+//
+//                ServerConnettion connection = (ServerConnettion) c;
+//                if (!isRegistered(connection.getID())) {
+//                    PlayerServerData playerData = new PlayerServerData();
+//                    playerData.setCoins(beginningValue);
+//                    playerData.setPlayerHand(new Hand());
+//
+//                    playerData.getPlayerHand().setPoints(points);
+//                    storedData.put(connection.getID(), playerData);
+//
+//                }
+//                if (object instanceof Network.reqPlayerData) {
+//                    PlayerServerData response = storedData.get(connection.getID());
+//                    Log.info("BLACKJACK-SERVER", "Client requested to send player data - sending");
+//                    server.sendToTCP(connection.getID(), response);
+//
+//                }
+//                if (object instanceof Network.increasePoints) {
+//                    PlayerServerData response = storedData.get(connection.getID());
+//                    response.getPlayerHand().setPoints(response.getPlayerHand().getPoints() + 10);
+//                    Log.info("BLACKJACK-SERVER", "Ping has been requested by Client, increasing points on hand by 10 ");
+//                    server.sendToTCP(connection.getID(), response);
+//
+//                }
+//                if (object instanceof Network.decreasePoints) {
+//                    PlayerServerData response = storedData.get(connection.getID());
+//                    response.getPlayerHand().setPoints(response.getPlayerHand().getPoints() - 10);
+//                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, decreasing points on hand by 10 ");
+//                    server.sendToTCP(connection.getID(), response);
+//
+//                }
+//                if (object instanceof Network.increaseCash) {
+//                    PlayerServerData response = storedData.get(connection.getID());
+//                    response.setCoins(response.getCoins() + 10);
+//                    Log.info("BLACKJACK-SERVER", "Ping has been requested by Client, increasing amount of cash by 10");
+//                    server.sendToTCP(connection.getID(), response);
+//
+//                }
+//                if (object instanceof Network.decreaseCash) {
+//                    PlayerServerData response = storedData.get(connection.getID());
+//                    response.setCoins(response.getCoins() - 10);
+//                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, decreasing amount of cash by 10");
+//                    server.sendToTCP(connection.getID(), response);
+//
+//                }
+//                if (object instanceof Network.RequestType) {
+//                    PlayerServerData response = storedData.get(connection.getID());
+//                    if (((Network.RequestType) object).request.equals(Request.HIT)) {
+//                        response.getPlayerHand().addCard(allDecks.getCardFromShoe());
+//                    }
+//                    if (((Network.RequestType) object).request.equals(Request.STAND)) {
+//                        response.requestedEndTurn = true;
+//                    }  if (((Network.RequestType) object).request.equals(Request.DOUBLE_DOWN)) {
+//                        if(response.getCoins()<10){
+//                            response.serverResponseType = Response.DONT_HAVE_COINTS;
+//                            server.sendToTCP(connection.getID(), response);
+//                        }
+//                        else{
+//                            response.setCoins(response.getCoins()-10);
+//                            currentTokensAtStake +=10;
+//                            response.serverResponseType = Response.DELETE_COINS;
+//                            if(assignCardToPlayer(response)){
+//                                server.sendToTCP(connection.getID(), response);
+//                            }
+//                        }
+//
+//
+//                    }
+//
+//
+//
+//                }
+//
+//            }
+//        });
 
-            public void received(Connection c, Object object) {
-                //Sending back Ping to client
 
-                ServerConnettion connection = (ServerConnettion) c;
-                if (!isRegistered(connection.getID())) {
-                    PlayerServerDataParser playerData = new PlayerServerDataParser();
-                    playerData.setCoins(beginningValue);
-                    playerData.setPlayerHand(new Hand());
-
-                    playerData.getPlayerHand().setPoints(points);
-                    storedData.put(connection.getID(), playerData);
-
-                }
-                if (object instanceof Network.reqPlayerData) {
-                    PlayerServerDataParser response = storedData.get(connection.getID());
-                    Log.info("BLACKJACK-SERVER", "Client requested to send player data - sending");
-                    server.sendToTCP(connection.getID(), response);
-
-                }
-                if (object instanceof Network.increasePoints) {
-                    PlayerServerDataParser response = storedData.get(connection.getID());
-                    response.getPlayerHand().setPoints(response.getPlayerHand().getPoints() + 10);
-                    Log.info("BLACKJACK-SERVER", "Ping has been requested by Client, increasing points on hand by 10 ");
-                    server.sendToTCP(connection.getID(), response);
-
-                }
-                if (object instanceof Network.decreasePoints) {
-                    PlayerServerDataParser response = storedData.get(connection.getID());
-                    response.getPlayerHand().setPoints(response.getPlayerHand().getPoints() - 10);
-                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, decreasing points on hand by 10 ");
-                    server.sendToTCP(connection.getID(), response);
-
-                }
-                if (object instanceof Network.increaseCash) {
-                    PlayerServerDataParser response = storedData.get(connection.getID());
-                    response.setCoins(response.getCoins() + 10);
-                    Log.info("BLACKJACK-SERVER", "Ping has been requested by Client, increasing amount of cash by 10");
-                    server.sendToTCP(connection.getID(), response);
-
-                }
-                if (object instanceof Network.decreaseCash) {
-                    PlayerServerDataParser response = storedData.get(connection.getID());
-                    response.setCoins(response.getCoins() - 10);
-                    Log.info("BLACKJACK-SERVER","Ping has been requested by Client, decreasing amount of cash by 10");
-                    server.sendToTCP(connection.getID(), response);
-
-                }
-                if (object instanceof Network.RequestType) {
-                    PlayerServerDataParser response = storedData.get(connection.getID());
-                    if (((Network.RequestType) object).request.equals(Request.HIT)) {
-                        response.getPlayerHand().addCard(allDecks.getCardFromShoe());
-                    }
-                    if (((Network.RequestType) object).request.equals(Request.STAND)) {
-                        response.requestedEndTurn = true;
-                    }  if (((Network.RequestType) object).request.equals(Request.DOUBLE_DOWN)) {
-                        if(response.getCoins()<10){
-                            response.serverResponseType = Response.DONT_HAVE_COINTS;
-                            server.sendToTCP(connection.getID(), response);
-                        }
-                        else{
-                            response.setCoins(response.getCoins()-10);
-                            currentTokensAtStake +=10;
-                            response.serverResponseType = Response.DELETE_COINS;
-                            if(assignCardToPlayer(response)){
-                                server.sendToTCP(connection.getID(), response);
-                            }
-                        }
-
-
-                    }
-
-
-
-                }
-
-            }
-        });
         server.bind(Network.port);
         server.start();
         Log.info("BLACKJACK-SERVER", "Waiting for Players to Join ");
         while (true) {
             boolean canStart = true;
-            for (PlayerServerDataParser value : storedData.values()) {
-
-                if (!value.agreedToPLay) {
-                    canStart = false;
-                }
-            }
             if (canStart) break;
 
         }
@@ -178,56 +170,42 @@ public class ServerLauncher {
         Log.info("BLACKJACK-SERVER", "All Players Received first cards - Game started");
         while (!gameMustEnd) {
             endTurn = true;
-            for (Map.Entry<Integer, PlayerServerDataParser> value : storedData.entrySet()) {
-                if (!value.getValue().requestedEndTurn) {
-                    endTurn = false;
-                }
-            }
-            if (endTurn) {
-                for (Map.Entry<Integer, PlayerServerDataParser> value : storedData.entrySet()) {
-                   value.getValue().serverResponseType = Response.END_TURN;
-                   value.getValue().currentTurn++;
-                }
-               server.sendToAllTCP(Response.END_TURN);
-               server.sendToAllTCP(winnerOfRound().getValue());
 
-            }
         }
 
 
     }
 
     private void assignCardAtStartOfRound() {
-        for (Map.Entry<Integer, PlayerServerDataParser> value : storedData.entrySet()) {
+        for ( PlayerServerData value : storedData) {
             Card toAssign = newDeck.removeCard();
             if (toAssign == null) {
                 allDecks.replaceDeckIfNeeded(newDeck);
                 toAssign = newDeck.removeCard();
             }
-            value.getValue().getPlayerHand().addCard(toAssign);
+            value.getPlayerHand().addCard(toAssign);
             toAssign = newDeck.removeCard();
             if (toAssign == null) {
                 allDecks.replaceDeckIfNeeded(newDeck);
                 toAssign = newDeck.removeCard();
             }
-            value.getValue().getPlayerHand().addCard(toAssign);
+            value.getPlayerHand().addCard(toAssign);
             toAssign = newDeck.removeCard();
             if (toAssign == null) {
                 allDecks.replaceDeckIfNeeded(newDeck);
                 toAssign = newDeck.removeCard();
             }
-            croupier.getPlayerHand().addCard(toAssign);
+
             toAssign = newDeck.removeCard();
             if (toAssign == null) {
                 allDecks.replaceDeckIfNeeded(newDeck);
                 toAssign = newDeck.removeCard();
             }
-            croupier.getPlayerHand().addCard(toAssign);
-            server.sendToTCP(value.getKey(), Response.BEGIN_GAME);
-            server.sendToTCP(value.getKey(), value.getValue());
+
+            server.sendToTCP(value.getConnection().getID(), Response.BEGIN_GAME);
         }
     }
-    private boolean assignCardToPlayer( PlayerServerDataParser player) {
+    private boolean assignCardToPlayer( PlayerServerData player) {
             Card toAssign = newDeck.removeCard();
             if (toAssign == null) {
                 allDecks.replaceDeckIfNeeded(newDeck);
