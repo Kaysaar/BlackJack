@@ -10,12 +10,15 @@ import com.esotericsoftware.minlog.Log;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
+import com.duszki.blackjack.shared.events.*;
 /**
  * Launches the server application.
  */
 public class ServerLauncher {
+    public static final int MAX_PLAYERS = 5;
     Server server;
     int turn = 0;
     Deck newDeck;
@@ -66,6 +69,44 @@ public class ServerLauncher {
         // For consistency, the classes to be sent over the network are
         // registered by the same method for both the client and server.
         Network.register(server);
+
+        server.addListener(new Listener() {
+
+            @Override
+            public void received(Connection connection, Object object) {
+
+                if(object instanceof JoinRequestEvent){
+
+                    JoinRequestEvent joinRequestEvent = (JoinRequestEvent) object;
+
+                    JoinResponseEvent joinResponseEvent = new JoinResponseEvent();
+
+                    if(storedData.size() < MAX_PLAYERS) {
+                        PlayerServerData serverPlayer = new PlayerServerData(connection, joinRequestEvent.getPlayerName());
+
+                        storedData.add(serverPlayer);
+
+                        joinResponseEvent.setSuccess();
+                    } else {
+                        joinResponseEvent.setUnsuccess();
+                    }
+                    connection.sendTCP(joinResponseEvent);
+                }
+
+            }
+
+        });
+
+        server.addListener(new Listener() {
+
+            @Override
+            public void received(Connection connection, Object object) {
+
+
+
+            }
+
+        });
 
 //        server.addListener(new Listener() {
 //
@@ -226,4 +267,14 @@ public class ServerLauncher {
     public static void main(String[] args) throws IOException {
         new ServerLauncher();
     }
+
+    public PlayerServerData getPlayerByConnection(Connection connection) {
+        for (PlayerServerData serverPlayer : storedData) {
+            if (serverPlayer.getConnection() == connection) {
+                return serverPlayer;
+            }
+        }
+        return null;
+    }
+
 }

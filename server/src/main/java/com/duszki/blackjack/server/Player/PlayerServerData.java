@@ -3,6 +3,7 @@ package com.duszki.blackjack.server.Player;
 import com.duszki.blackjack.server.Card.Hand;
 import com.duszki.blackjack.server.Request;
 import com.duszki.blackjack.server.Response;
+import com.esotericsoftware.kryonet.Connection;
 
 public class PlayerServerData {
 
