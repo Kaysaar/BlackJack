@@ -1,6 +1,6 @@
 package com.duszki.blackjack.server;
 
-import com.duszki.blackjack.server.Card.Card;
+import com.duszki.blackjack.shared.card.Card;
 import com.duszki.blackjack.server.Card.Hand;
 import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryo.Kryo;

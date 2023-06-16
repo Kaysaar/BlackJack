@@ -1,8 +1,6 @@
 package com.duszki.blackjack.server.Player;
 
 import com.duszki.blackjack.server.Card.Hand;
-import com.duszki.blackjack.server.Request;
-import com.duszki.blackjack.server.Response;
 import com.esotericsoftware.kryonet.Connection;
 
 public class PlayerServerData {
@@ -10,18 +8,22 @@ public class PlayerServerData {
     private Connection connection;
 
     private Hand playerHand;
-    public boolean agreedToPlay = false;
-    private int coins;
-    public String playerName;
-    public boolean hasLost;
-    public boolean hasStand = false;
+    private boolean agreedToPlay = false;
+    private int tokens;
+    private String playerName;
+    private boolean hasLost;
+    private boolean hasStand;
+
+    private int stake; // stake is the amount of tokens the player bets in a round
 
     public PlayerServerData(Connection connection, String playerName) {
         this.connection = connection;
         this.playerName = playerName;
-        this.playerHand = new Hand();
-        this.coins = 1000;
+//        this.playerHand = new Hand();
+//        this.coins = 1000;
+        this.hasStand = false;
         this.hasLost = false;
+
     }
 
     public Connection getConnection() {
@@ -36,16 +38,35 @@ public class PlayerServerData {
         this.playerHand = playerHand;
     }
 
-    public int getCoins() {
-        return coins;
+    public int getTokens() {
+        return tokens;
     }
 
-    public void setCoins(int coins) {
-        this.coins = coins;
+    public void setTokens(int tokens) {
+        this.tokens = tokens;
     }
 
+    public void setHasStand(boolean hasStand) {
+        this.hasStand = hasStand;
+    }
 
+    public boolean getHasStand() {
+        return this.hasStand;
+    }
 
+    public void setHasLost(boolean hasLost) {
+        this.hasLost = hasLost;
+    }
 
+    public boolean getHasLost() {
+        return this.hasLost;
+    }
 
+    public int getStake() {
+        return stake;
+    }
+
+    public void setStake(int i) {
+        this.stake = i;
+    }
 }
