@@ -4,15 +4,25 @@ public class JoinResponseEvent {
 
     private boolean success;
 
+    private String message;
+
     public JoinResponseEvent() {
     }
 
-    public void setSuccess() {
-        this.success = true;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
-    public void setUnsuccess() {
-        this.success = false;
+    public boolean getSuccess() {
+        return success;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
 }
