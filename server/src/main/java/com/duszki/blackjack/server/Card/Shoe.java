@@ -1,12 +1,16 @@
 package com.duszki.blackjack.server.Card;
 
+import com.duszki.blackjack.shared.card.Card;
+
 import java.util.ArrayList;
 
 public class Shoe {
+
+    static final int deckQuantity = 8;
     private ArrayList<Deck> deckList = new ArrayList<>();
 
     public Shoe(){
-        int deckQuantity = 8;
+
         for(int i = 0; i < deckQuantity; i++){
             Deck deck = new Deck();
             deckList.add(deck);
@@ -21,7 +25,7 @@ public class Shoe {
     }
     void removeEmptyDeck(Deck currDeck){
         if(currDeck==null) return;
-        if(currDeck.getCardsInsideDeck().isEmpty()){
+        if(currDeck.getCardsInDeck().isEmpty()){
             deckList.remove(currDeck);
         }
     }
@@ -32,7 +36,7 @@ public class Shoe {
 
     public Card getCardFromShoe(){
         Deck curentDeck = getFirstAvailableDeck();
-        if(curentDeck.getCardsInsideDeck().isEmpty()){
+        if(curentDeck.getCardsInDeck().isEmpty()){
             curentDeck = replaceDeckIfNeeded(getFirstAvailableDeck());
         }
         if(curentDeck==null){

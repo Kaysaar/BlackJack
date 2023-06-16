@@ -1,12 +1,14 @@
 package com.duszki.blackjack.server.Card;
-import com.duszki.blackjack.server.Player.PlayerServerData;
-import com.esotericsoftware.kryonet.Connection;
 
 public class Dealer {
 
+    private Hand dealerHand;
 
-    public void drawCards(){
-
+    public Dealer() {
+        this.dealerHand = new Hand();
     }
 
+    public Hand getHand() {
+        return dealerHand;
+    }
 }

@@ -1,43 +1,61 @@
 package com.duszki.blackjack.server.Card;
 
+import com.duszki.blackjack.shared.card.Card;
+
 import java.util.ArrayList;
 
 public class Hand {
 
+    private static final int ACE_LOW_VALUE = 1;
+    private static final int ACE_HIGH_VALUE = 11;
+    private static final int HAND_MAX_VALUE = 21;
+    private static final int STRONG_CARD_VALUE = 10;
     private ArrayList<Card> cardsInHand;
 
-    private int points;
-    public Hand(){
+    private int handValue;
+
+    public Hand() {
         cardsInHand = new ArrayList<>();
-        points = 0;
+        handValue = 0;
     }
 
-    public int getPoints() {
-        return points;
+    public int getHandValue() {
+        return handValue;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
-    }
-    public void addCard(Card card){
+    public void addCard(Card card) {
         cardsInHand.add(card);
+        updateHandValue();
+    }
 
-        if(card.getId()==1 && (this.points + 11 < 22)){
-            card.setValue(11);
-        }
-        else if(this.points + card.getValue() > 21){
-            for(Card cardd : this.cardsInHand){
-                if(cardd.getId()==1){
-                    card.setValue(1);
+    private void updateHandValue() {
+        int points = 0;
+
+        int aceCount = 0;
+
+        for (Card card : cardsInHand) {
+            switch (card.getRank()) {
+                case "ace" -> {
+                    aceCount++;
                 }
-                this.points -= 10;
-                break;
+                case "jack", "queen", "king" -> points += STRONG_CARD_VALUE;
+                default -> points += Integer.parseInt(card.getRank());
             }
         }
-        this.points += card.getValue();
+
+        for (int i = 0; i < aceCount; i++) {
+            if (points + ACE_HIGH_VALUE > HAND_MAX_VALUE) {
+                points += ACE_LOW_VALUE;
+            } else {
+                points += ACE_HIGH_VALUE;
+            }
+        }
+
+        handValue = points;
+
     }
 
-    void removeAll(){
+    public void clearHand() {
         cardsInHand.clear();
     }
 }
