@@ -16,6 +16,11 @@ public class Shoe {
             deckList.add(deck);
         }
     }
+    public void lastDeckRound(){
+        Deck deck = new Deck();
+        deckList.add(deck);
+    }
+
     Deck getFirstAvailableDeck(){
         if(deckList.isEmpty()){
             return null;

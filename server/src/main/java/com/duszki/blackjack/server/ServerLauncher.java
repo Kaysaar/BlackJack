@@ -4,6 +4,7 @@ import com.duszki.blackjack.server.Card.*;
 import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.duszki.blackjack.shared.data.DataToTransfer;
 import com.duszki.blackjack.shared.data.WinnerOfRound;
+import com.duszki.blackjack.shared.models.Card;
 import com.duszki.blackjack.shared.models.Hand;
 import com.duszki.blackjack.shared.player.PlayerTransferData;
 import com.esotericsoftware.kryonet.Connection;
@@ -28,6 +29,7 @@ public class ServerLauncher {
     public boolean isGameOver = false;
 
     private int currentPlayerCursor;
+    public  boolean finalRound = false;
 
 
     public boolean hasGameStarted = false;
@@ -214,15 +216,33 @@ public class ServerLauncher {
     public void startRound() {
 
         currentPlayerCursor = 0;
-
+        Card card_from_deck_first ;
+        Card card_from_deck_second;
         for (PlayerServerData player : storedPlayerData) {
             player.getPlayerHand().clearHand();
             player.setHasStand(false);
-            player.getPlayerHand().addCard(shoe.getCardFromShoe());
-            player.getPlayerHand().addCard(shoe.getCardFromShoe());
+            card_from_deck_first = shoe.getCardFromShoe();
+            card_from_deck_second = shoe.getCardFromShoe();
+            if(card_from_deck_second==null||card_from_deck_first==null){
+                finalRound = true;
+                shoe.lastDeckRound();
+                card_from_deck_first = shoe.getCardFromShoe();
+                card_from_deck_second = shoe.getCardFromShoe();
+            }
+
+            player.getPlayerHand().addCard(card_from_deck_first);
+            player.getPlayerHand().addCard(card_from_deck_second);
         }
-        dealer.getHand().addCard(shoe.getCardFromShoe());
-        dealer.getHand().addCard(shoe.getCardFromShoe());
+        card_from_deck_first = shoe.getCardFromShoe();
+        card_from_deck_second = shoe.getCardFromShoe();
+        if(card_from_deck_second==null||card_from_deck_first==null){
+            finalRound = true;
+            shoe.lastDeckRound();
+            card_from_deck_first = shoe.getCardFromShoe();
+            card_from_deck_second = shoe.getCardFromShoe();
+        }
+        dealer.getHand().addCard(card_from_deck_first);
+        dealer.getHand().addCard(card_from_deck_second);
     }
 
 
