@@ -15,9 +15,17 @@ public class Board implements Screen {
     private Stage stage;
     private Game game;
 
+    private float width;
+    private float height;
+    private float aspectRatio;
+
     public Board(Game game) {
         this.game = game;
-        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
+        height = 1000;
+        width = height * aspectRatio;
+
+        stage = new Stage(new FitViewport(width, height));
         skin = new Skin(Gdx.files.internal("Board/skin.json"));
         MyInputProcessor myInputProcessor = new MyInputProcessor();
         InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor,stage);
@@ -34,15 +42,15 @@ public class Board implements Screen {
         table.setFillParent(true);
 
         ImageButton imageButton = new ImageButton(skin, "Hit");
-        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(500f);
+        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(100f);
 
         table.row();
         imageButton = new ImageButton(skin, "Stand");
-        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(500f);
+        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(100f);
 
         table.row();
         imageButton = new ImageButton(skin, "Double");
-        table.add(imageButton).padTop(0f).padBottom(200f).padRight(500f);
+        table.add(imageButton).padTop(0f).padBottom(70f).padRight(100f);
         stage.addActor(table);
     }
 

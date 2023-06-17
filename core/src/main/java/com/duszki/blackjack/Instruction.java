@@ -15,13 +15,14 @@ public class Instruction {
     private Homepage homepage;
     public Instruction(Homepage homepage){
 
+
         this.homepage = homepage;
         skin = new Skin(Gdx.files.internal("Scene/Instruction1/Instruction1.json"));
         table = new Table();
         table.setBackground(skin.getDrawable("Instruction"));
+        table.setSize(1366,566);
         table.align(Align.topRight);
-        table.setSize(1500,800);
-        table.pad(20f);
+
         ImageButton imageButton = new ImageButton(skin, "Next");
         table.add(imageButton).top().right();
 
@@ -49,9 +50,6 @@ public class Instruction {
                 homepage.show();
             }
         });
-
-
-        table.row();
 
     }
     public Table getTable() {

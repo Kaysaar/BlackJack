@@ -64,7 +64,6 @@ public class Homepage implements Screen {
 
         backgroundTexture = new Texture("homepage.jpg");
         camera = new OrthographicCamera();
-//        camera.setToOrtho(false, width, height);
 
         viewport = new FitViewport(width, height, camera);
 
@@ -164,9 +163,8 @@ public class Homepage implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 0);
         camera.update();
-
-        batch.begin();
         batch.setProjectionMatrix(camera.combined);
+        batch.begin();
         batch.draw(backgroundTexture, 0, 0,width,height);
         batch.end();
         stage.act();
@@ -177,22 +175,6 @@ public class Homepage implements Screen {
     public void resize(int width, int height) {
         viewport.update(width, height);
 
-
-//        if (!Gdx.graphics.isFullscreen()) {
-//            float scale = Math.min(1600f / this.width, 1200f / this.height);
-//            Array<Actor> actors = stage.getActors();
-//            for (Actor actor : actors) {
-//                actor.setScale(scale);
-//            }
-//        } else {
-//            Array<Actor> actors = stage.getActors();
-//            for (Actor actor : actors) {
-//                actor.setScale(1);
-//            }
-//        }
-//        camera.setToOrtho(false, width, height);
-//        viewport.update(width, height, true);
-//        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
 
     }
 
