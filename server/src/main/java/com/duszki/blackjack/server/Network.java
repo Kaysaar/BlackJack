@@ -1,7 +1,7 @@
 package com.duszki.blackjack.server;
 
-import com.duszki.blackjack.shared.card.Card;
-import com.duszki.blackjack.server.Card.Hand;
+import com.duszki.blackjack.shared.models.Card;
+import com.duszki.blackjack.shared.models.Hand;
 import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
@@ -28,7 +28,6 @@ public class Network {
         kryo.register(Network.increasePoints.class);
         kryo.register(Network.decreaseCash.class);
         kryo.register(Network.decreasePoints.class);
-        kryo.register(Request.class);
         kryo.register(RequestType.class);
     }
 
@@ -52,7 +51,6 @@ public class Network {
         public boolean requested;
     }
     static public class RequestType{
-        public Request request;
     }
 
 }

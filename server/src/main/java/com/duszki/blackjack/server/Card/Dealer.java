@@ -1,6 +1,9 @@
 package com.duszki.blackjack.server.Card;
 
-public class Dealer {
+import com.duszki.blackjack.server.Player.Player;
+import com.duszki.blackjack.shared.models.Hand;
+
+public class Dealer extends Player {
 
     private Hand dealerHand;
 

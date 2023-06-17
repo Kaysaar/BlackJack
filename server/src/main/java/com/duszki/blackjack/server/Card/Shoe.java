@@ -1,6 +1,6 @@
 package com.duszki.blackjack.server.Card;
 
-import com.duszki.blackjack.shared.card.Card;
+import com.duszki.blackjack.shared.models.Card;
 
 import java.util.ArrayList;
 

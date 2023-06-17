@@ -1,4 +1,4 @@
-package com.duszki.blackjack.shared.card;
+package com.duszki.blackjack.shared.models;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +9,7 @@ public class Card {
 
     private final String suit;
     private final String rank;
+
 
     public static List<String> getValidSuits() {
         return Arrays.asList("spades", "hearts", "diamonds", "clubs");

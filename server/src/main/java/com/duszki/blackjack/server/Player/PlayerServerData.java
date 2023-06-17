@@ -1,6 +1,6 @@
 package com.duszki.blackjack.server.Player;
 
-import com.duszki.blackjack.server.Card.Hand;
+import com.duszki.blackjack.shared.models.Hand;
 import com.esotericsoftware.kryonet.Connection;
 
 public class PlayerServerData {
@@ -10,7 +10,7 @@ public class PlayerServerData {
     private Hand playerHand;
     private boolean agreedToPlay = false;
     private int tokens;
-    private String playerName;
+    public String playerName;
     private boolean hasLost;
     private boolean hasStand;
 
@@ -54,7 +54,7 @@ public class PlayerServerData {
         return this.hasStand;
     }
 
-    public void setHasLost(boolean hasLost) {
+    public void setHasLostRound(boolean hasLost) {
         this.hasLost = hasLost;
     }
 

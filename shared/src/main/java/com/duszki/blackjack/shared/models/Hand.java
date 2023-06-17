@@ -1,6 +1,6 @@
-package com.duszki.blackjack.server.Card;
+package com.duszki.blackjack.shared.models;
 
-import com.duszki.blackjack.shared.card.Card;
+import com.duszki.blackjack.shared.models.Card;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,9 @@ public class Hand {
     public int getHandValue() {
         return handValue;
     }
-
+    public ArrayList<Card> getCardsInHand() {
+        return cardsInHand;
+    }
     public void addCard(Card card) {
         cardsInHand.add(card);
         updateHandValue();
