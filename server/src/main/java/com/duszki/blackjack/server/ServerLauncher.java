@@ -3,7 +3,6 @@ package com.duszki.blackjack.server;
 import com.duszki.blackjack.server.Card.*;
 import com.duszki.blackjack.server.Player.PlayerServerData;
 import com.duszki.blackjack.shared.data.DataToTransfer;
-import com.duszki.blackjack.shared.data.WinnerOfRound;
 import com.duszki.blackjack.shared.models.Card;
 import com.duszki.blackjack.shared.models.Hand;
 import com.duszki.blackjack.shared.player.PlayerTransferData;
@@ -12,7 +11,9 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.duszki.blackjack.shared.events.*;
 
@@ -30,7 +31,7 @@ public class ServerLauncher {
 
     private int currentPlayerCursor;
     public  boolean finalRound = false;
-
+    int currentStake = 0;
 
     public boolean hasGameStarted = false;
 
@@ -128,7 +129,7 @@ public class ServerLauncher {
             public void received(Connection connection, Object object) {
                 if (object instanceof HitEvent) {
 
-                    PlayerServerData currentPlayer = getCurrentTurnPlayer();
+                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
 
                     if(currentPlayer.getConnection() == connection) {
                         hit(currentPlayer);
@@ -147,7 +148,7 @@ public class ServerLauncher {
             public void received(Connection connection, Object object) {
                 if (object instanceof StandEvent) {
 
-                    PlayerServerData currentPlayer = getCurrentTurnPlayer();
+                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
 
                     if(currentPlayer.getConnection() == connection) {
                         stand(currentPlayer);
@@ -166,7 +167,7 @@ public class ServerLauncher {
             public void received(Connection connection, Object object) {
                 if (object instanceof DoubleDownEvent) {
 
-                    PlayerServerData currentPlayer = getCurrentTurnPlayer();
+                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
                     int currTokens = currentPlayer.getTokens();
                     int currStake = currentPlayer.getStake();
                     if(currentPlayer.getConnection() == connection) {
@@ -300,7 +301,7 @@ public class ServerLauncher {
     }
 
     public void nextPlayer() {
-        PlayerServerData nextPlayer = null;
+        PlayerServerData nextPlayer;
         int iterator =0;
         while(true){
 
@@ -310,7 +311,7 @@ public class ServerLauncher {
                 break;
             }
             iterator++;
-            if(iterator>=20){
+            if(iterator>=20){ // 20 is random number simply when where would be situation that everyone has stand so we wont have infinite loop
                 nextPlayer=null;
                 break;
             }
@@ -331,14 +332,62 @@ public class ServerLauncher {
         for (PlayerServerData storedPlayerDatum : storedPlayerData) {
             storedPlayerDatum.setHasStand(false);
         }
-        //TODO : Send Who is the winer of Round
+        stakeDivision();
         packAllPlayersData();
-        server.sendToAllTCP(new WinnerOfRound());
+
+
     }
 
 
     public static void main(String[] args) throws IOException {
         new ServerLauncher();
+    }
+    public List<PlayerServerData> selectWinnersOfRound(){
+        List<PlayerServerData> winners = new ArrayList<>();
+        boolean atLeastOneBelow21 = false;
+        int smallestDistanceFrom21 = Math.abs(dealer.getHand().getHandValue()-21);
+        if(smallestDistanceFrom21<=21){
+            atLeastOneBelow21 = true;
+        }
+        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
+            if(Math.abs(storedPlayerDatum.getPlayerHand().getHandValue()-21)<smallestDistanceFrom21){
+                if(storedPlayerDatum.getPlayerHand().getHandValue()-21>=0){
+                    atLeastOneBelow21 = true;
+                }
+                smallestDistanceFrom21 = (Math.abs(storedPlayerDatum.getPlayerHand().getHandValue()-21));
+
+            }
+        }
+        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
+            if(storedPlayerDatum.getPlayerHand().getHandValue()==smallestDistanceFrom21){
+                if(storedPlayerDatum.getPlayerHand().getHandValue()<=21){
+                    winners.add(storedPlayerDatum);
+                }
+                if(storedPlayerDatum.getPlayerHand().getHandValue()>21&&!atLeastOneBelow21){
+                    winners.add(storedPlayerDatum);
+                }
+
+            }
+        }
+
+        // If winners is empty then it means that dealer has won the round
+        return  winners;
+    }
+    public void stakeDivision() {
+        int  currentStake = 0;
+        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
+            currentStake+= storedPlayerDatum.getStake();
+            storedPlayerDatum.setStake(0);
+        }
+        List <PlayerServerData> winnersOfRound = selectWinnersOfRound();
+        if(winnersOfRound.isEmpty()){
+            return;
+        }
+        int singleAward = currentStake/winnersOfRound.size();
+        for (PlayerServerData playerServerData : winnersOfRound) {
+            playerServerData.setTokens(playerServerData.getTokens()+singleAward);
+        }
+
     }
 
     public PlayerServerData getPlayerByConnection(Connection connection) {
