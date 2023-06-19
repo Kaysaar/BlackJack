@@ -22,6 +22,7 @@ public class Lwjgl3Launcher {
 
         configuration.setTitle("Blackjack");
         configuration.useVsync(true);
+        configuration.setResizable(false);
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
         configuration.setWindowedMode(1280, 720);
 
