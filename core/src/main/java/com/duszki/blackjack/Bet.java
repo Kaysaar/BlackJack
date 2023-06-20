@@ -30,9 +30,12 @@ public class Bet  {
         table.setBackground(bet.getDrawable("back2_0"));
         table.setSize(300, 200);
         TextField textField = new TextField("", bet);
-        table.add(textField).padTop(70.0f);
-        table.setPosition(width - width / 5,500);
+        table.add(textField).padTop(200.0f).row();
 
+        Skin bet_button = new Skin(Gdx.files.internal("bet_button/bet_button.json"));
+        ImageButton imageButton = new ImageButton(bet_button, "default");
+        table.add(imageButton).padTop(40.0f).row();
+        table.setPosition(width - width / 5,500);
     }
 
     public Table getTable() {
