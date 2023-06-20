@@ -160,7 +160,7 @@ public class Board implements Screen {
                             Gdx.app.postRunnable(new Runnable() {
                                 @Override
                                 public void run() {
-                                    addCardBoard();
+                                    addCardBoard(card.toString());
                                 }
                             });
 
@@ -168,10 +168,11 @@ public class Board implements Screen {
                     } else {
                         for (int i = cardsInHand; i < cards.size(); i++) {
                             System.out.println(cards.get(i).toString());
+                            Card card = cards.get(i);
                             Gdx.app.postRunnable(new Runnable() {
                                 @Override
                                 public void run() {
-                                    addCardBoard();
+                                    addCardBoard(card.toString());
                                 }
                             });
 
@@ -190,8 +191,8 @@ public class Board implements Screen {
     }
 
 
-    void addCardBoard(){
-        UnrevealedCard unrevealedCard = new UnrevealedCard("10_of_clubs");
+    void addCardBoard(String card){
+        UnrevealedCard unrevealedCard = new UnrevealedCard(card);
         unrevealedCard.setAction(Hand.size());
         stage.addActor(unrevealedCard.getImage());
         Hand.add(unrevealedCard);

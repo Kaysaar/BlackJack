@@ -5,6 +5,8 @@ import com.duszki.blackjack.shared.models.Card;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Collections.shuffle;
+
 public class Deck {
 
     public LinkedList<Card> getCardsInDeck() {
@@ -26,7 +28,7 @@ public class Deck {
             }
         }
 
-
+        shuffle(cardsInDeck);
     }
     public Card removeCard(){
         if(cardsInDeck.isEmpty()){
