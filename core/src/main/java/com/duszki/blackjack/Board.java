@@ -32,26 +32,13 @@ public class Board implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
 
 
-        Table table = new Table();
-        table.setBackground(skin.getDrawable("Board1728x1117"));
-        table.padLeft(0.0f);
-        table.padRight(100.0f);
-        table.padTop(0.0f);
-        table.padBottom(26.0f);
-        table.align(Align.bottomRight);
-        table.setFillParent(true);
 
         ImageButton imageButton = new ImageButton(skin, "Hit");
-        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(100f);
 
-        table.row();
         imageButton = new ImageButton(skin, "Stand");
-        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(100f);
 
-        table.row();
         imageButton = new ImageButton(skin, "Double");
-        table.add(imageButton).padTop(0f).padBottom(70f).padRight(100f);
-        stage.addActor(table);
+
     }
 
     @Override

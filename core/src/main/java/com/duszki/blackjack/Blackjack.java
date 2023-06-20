@@ -19,7 +19,8 @@ public class Blackjack extends Game {
     public void create() {
         game = this;
         homepage = new Homepage(this);
-        setScreen(homepage);
+        board = new Board(this);
+        setScreen(board);
     }
 
     @Override
