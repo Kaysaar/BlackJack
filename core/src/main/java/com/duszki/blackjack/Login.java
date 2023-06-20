@@ -28,15 +28,15 @@ public class Login {
         table.add(label).padBottom(50f).row();
         label = new Label("Ip address", skin);
         table.add(label).padBottom(10f).row();
-        TextField textField2 = new TextField("", skin);
+        TextField textField2 = new TextField("localhost", skin);
         table.add(textField2).padBottom(10f).row();
         label = new Label("Port", skin);
         table.add(label).padBottom(10f).row();
-        TextField textField3 = new TextField("", skin);
+        TextField textField3 = new TextField("5000", skin);
         table.add(textField3).padBottom(10f).row();
         label = new Label("Username", skin);
         table.add(label).padBottom(10f).row();
-        TextField textField4 = new TextField("", skin);
+        TextField textField4 = new TextField("sadas", skin);
         table.add(textField4).padBottom(20f).row();
         ImageButton imageButton = new ImageButton(skin, "Next");
         table.add(imageButton).row();

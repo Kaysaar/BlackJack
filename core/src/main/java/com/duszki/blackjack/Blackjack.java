@@ -18,9 +18,10 @@ public class Blackjack extends Game {
     @Override
     public void create() {
         game = this;
-        homepage = new Homepage(this);
+       //homepage = new Homepage(this);
+        board =new Board(this);
 
-        setScreen(homepage);
+        setScreen(board);
     }
 
     @Override
@@ -36,6 +37,7 @@ public class Blackjack extends Game {
     @Override
     public void dispose() {
         super.dispose();
-        homepage.dispose();
+        //homepage.dispose();
+        board.dispose();
     }
 }
