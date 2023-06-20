@@ -26,7 +26,7 @@ public class UnrevealedCard {
 
         Texture texture = new Texture(Gdx.files.internal("Cards/Back.png"));
         image = new Image(texture);
-        image.setPosition(width/2,1200);
+        image.setPosition(width/2 + width/4,1200);
         moveToAction = new MoveToAction();
 
     }

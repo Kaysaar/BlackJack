@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Board implements Screen {
@@ -31,7 +32,6 @@ public class Board implements Screen {
     private Texture backgroundTexture;
     private OrthographicCamera camera;
     private FitViewport viewport;
-
     private ArrayList<UnrevealedCard> Hand;
 
 
@@ -89,7 +89,6 @@ public class Board implements Screen {
         unrevealedCard.setAction(Hand.size());
         stage.addActor(unrevealedCard.getImage());
         Hand.add(unrevealedCard);
-
 
     }
 
