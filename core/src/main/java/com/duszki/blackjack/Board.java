@@ -58,6 +58,8 @@ public class Board implements Screen {
 
     private int cardsInHand;
 
+    private int cardsInDealer;
+
     private ArrayList<UnrevealedCard> Dealer;
 
     public Board(Game game) {
@@ -98,16 +100,13 @@ public class Board implements Screen {
         Hand = new ArrayList<>();
         Dealer = new ArrayList<>();
 
-        for (int i = 0; i < 2; i++) {
-                addCardforDealer();
-        }
+//        for (int i = 0; i < 2; i++) {
+//                addCardforDealer();
+//        }
 
         cardsInHand = 0;
 
-//        for (int i = 0; i < 2; i++) {
-//            addCard();
-//        }
-
+        cardsInDealer = 0;
 
         buttonHit = new ImageButton(skin, "Hit");
         buttonHit.setPosition(width - width / 5, 300);
@@ -153,7 +152,7 @@ public class Board implements Screen {
                     PlayerTransferData request = (PlayerTransferData) object;
 
                     ArrayList<Card> cards = request.getCards();
-                    if (cards.size() == 2) {
+                    if (cards.size() == 2 && cardsInHand == 0) {
                         cardsInHand = cards.size();
                         for (Card card : cards) {
                             System.out.println(card.toString());
@@ -188,10 +187,54 @@ public class Board implements Screen {
 
         });
 
+        client.addListener(new Listener() {
+            public void received(Connection connection, Object object) {
+                if (object instanceof DataToTransfer) {
+                    DataToTransfer request = (DataToTransfer) object;
+
+
+                    ArrayList<Card> cards = request.dealerHand.getCardsInHand();
+                    if (cards.size() == 2 && cardsInDealer == 0) {
+                        cardsInDealer = cards.size();
+                        for (Card card : cards) {
+                            System.out.println(card.toString());
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addCardforDealer(card.toString());
+                                }
+                            });
+
+                        }
+                    } else {
+                        for (int i = cardsInDealer; i < cards.size(); i++) {
+                            System.out.println(cards.get(i).toString());
+                            Card card = cards.get(i);
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addCardforDealer(card.toString());
+                                }
+                            });
+
+                            cardsInDealer++;
+
+                        }
+
+                    }
+                }
+
+
+            }
+
+
+        });
+
+
     }
 
 
-    void addCardBoard(String card){
+    void addCardBoard(String card) {
         UnrevealedCard unrevealedCard = new UnrevealedCard(card);
         unrevealedCard.setAction(Hand.size());
         stage.addActor(unrevealedCard.getImage());
@@ -199,13 +242,15 @@ public class Board implements Screen {
 
     }
 
-    void addCardforDealer(){
-        UnrevealedCard unrevealedCard;
-        if(Dealer.size() == 0) {
-            unrevealedCard = new UnrevealedCard("back");
-        }else {
-            unrevealedCard = new UnrevealedCard("10_of_clubs");
-        }
+    void addCardforDealer(String card) {
+//        UnrevealedCard unrevealedCard;
+//        if(Dealer.size() == 0) {
+//            unrevealedCard = new UnrevealedCard("back");
+//        }else {
+//            unrevealedCard = new UnrevealedCard("10_of_clubs");
+//        }
+
+        UnrevealedCard unrevealedCard = new UnrevealedCard(card);
 
         unrevealedCard.setDealerAction(Dealer.size());
         stage.addActor(unrevealedCard.getImage());
