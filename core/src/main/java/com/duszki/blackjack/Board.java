@@ -98,9 +98,7 @@ public class Board implements Screen {
         Hand = new ArrayList<>();
         Dealer = new ArrayList<>();
 
-        for (int i = 0; i < 2; i++) {
-                addCardforDealer();
-        }
+
 
         cardsInHand = 0;
 

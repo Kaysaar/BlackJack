@@ -54,7 +54,7 @@ public class Loading implements Screen {
         viewport = new FitViewport(width, height, camera);
 
         stage = new Stage(viewport);
-        startButtonSkin = new Skin(Gdx.files.internal("skins/Help/HelpButton.json"));
+        startButtonSkin = new Skin(Gdx.files.internal("skins/Play/PlayButton.json"));
         startGameButton = new ImageButton(startButtonSkin);
 
         startGameButton.setPosition(width / 2f - startGameButton.getWidth() / 2f, height / 2f - startGameButton.getHeight() / 2f);
