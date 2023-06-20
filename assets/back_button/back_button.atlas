@@ -1,0 +1,27 @@
+
+back_button.png
+size: 2048, 2048
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+back2
+  rotate: false
+  xy: 727, 845
+  size: 724, 604
+  orig: 724, 604
+  offset: 0, 0
+  index: -1
+back_button
+  rotate: false
+  xy: 1, 845
+  size: 724, 604
+  orig: 724, 604
+  offset: 0, 0
+  index: -1
+back_button2
+  rotate: false
+  xy: 1, 239
+  size: 724, 604
+  orig: 724, 604
+  offset: 0, 0
+  index: -1
