@@ -1,0 +1,27 @@
+
+balance.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+balans
+  rotate: false
+  xy: 1, 65
+  size: 215, 210
+  orig: 215, 210
+  offset: 0, 0
+  index: -1
+label3
+  rotate: false
+  xy: 1, 29
+  size: 176, 34
+  orig: 176, 34
+  offset: 0, 0
+  index: -1
+Roboto-Black(3)
+  rotate: false
+  xy: 1, 277
+  size: 506, 228
+  orig: 506, 228
+  offset: 0, 0
+  index: -1
