@@ -16,6 +16,7 @@ public class Bet  {
     private float height;
     private float aspectRatio;
     private Table table;
+    private Table table2;
     private Board board;
 
     public Bet(Board board) {
@@ -24,6 +25,15 @@ public class Bet  {
         height = 1000;
         width = height * aspectRatio;
         this.board = board;
+
+
+        table2 = new Table();
+        Skin skin = new Skin(Gdx.files.internal("balance/balance.json"));
+        table2.setBackground(skin.getDrawable("balans"));
+        table2.setSize(300, 200);
+        Label label = new Label("", skin);
+        table2.add(label).row();
+        table2.setPosition(width - width / 5,720);
 
         Skin bet = new Skin(Gdx.files.internal("new_bet/new_bet.json"));
         table = new Table();
@@ -41,6 +51,6 @@ public class Bet  {
     public Table getTable() {
         return table;
     }
-
+    public Table getTabl2(){return table2;}
 
 }

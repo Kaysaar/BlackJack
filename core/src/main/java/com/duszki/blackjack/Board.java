@@ -184,7 +184,7 @@ public class Board implements Screen {
 
         Bet bet = new Bet(this);
         stage.addActor(bet.getTable());
-
+        stage.addActor(bet.getTabl2());
 
 
 
