@@ -104,10 +104,6 @@ public class Board implements Screen {
 
         cardsInHand = 0;
 
-//        for (int i = 0; i < 2; i++) {
-//            addCard();
-//        }
-
 
         buttonHit = new ImageButton(skin, "Hit");
         buttonHit.setPosition(width - width / 5, 300);
