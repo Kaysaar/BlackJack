@@ -49,28 +49,11 @@ public class bet implements Screen {
         table2.add(textField).padTop(70.0f);
         table.add(table2);
 
-
-//        Skin back_button = new Skin(Gdx.files.internal("back_button/back_button.json"));
-//        ImageButton.ImageButtonStyle buttonStyle = new ImageButton.ImageButtonStyle();
-//        buttonStyle.up = back_button.getDrawable("back2");
-//        buttonStyle.down = back_button.getDrawable("back_button2");
-//        buttonStyle.over = back_button.getDrawable("back_button");
-//        ImageButton imageButton = new ImageButton(buttonStyle);
-//
-//        Skin lab = new Skin(Gdx.files.internal("bet/bet.json"));
-//        TextField textField = new TextField("", lab);
-//
-//        Stack stack = new Stack();
-//        stack.add(imageButton);
-//        stack.add(textField);
-//
-//        Table stackTable = new Table();
-//        stackTable.add(stack).size(imageButton.getWidth(), imageButton.getHeight());
-//
-//        table.add(stackTable).padBottom(300f);
-//        table.row();
-//
-
+        Table table3 = new Table();
+        Skin bet_button = new Skin(Gdx.files.internal("bet_button/bet_button.json"));
+        ImageButton imageButton = new ImageButton(bet_button, "default");
+        table3.add(imageButton).row();
+        table.add(table3);
         stage.addActor(table);
     }
 
