@@ -6,8 +6,10 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -54,6 +56,15 @@ public class bet implements Screen {
         ImageButton imageButton = new ImageButton(bet_button, "default");
         table3.add(imageButton).row();
         table.add(table3);
+
+        imageButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+                String bet_value = textField.getText();
+                game.setScreen(new Board(game));
+            }
+        });
         stage.addActor(table);
     }
 
