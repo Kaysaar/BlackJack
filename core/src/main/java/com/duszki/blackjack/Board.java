@@ -135,9 +135,9 @@ public class Board implements Screen {
         });
 
 
-        buttonStand = new ImageButton(skin, "Double");
-        buttonStand.setPosition(width - width / 5, 100);
-        stage.addActor(buttonStand);
+        buttonDouble = new ImageButton(skin, "Double");
+        buttonDouble.setPosition(width - width / 5, 100);
+        stage.addActor(buttonDouble);
 
         buttonDouble.addListener(new ClickListener() {
             @Override
