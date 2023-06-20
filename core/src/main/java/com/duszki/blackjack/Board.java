@@ -2,13 +2,22 @@ package com.duszki.blackjack;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class Board implements Screen {
     private Skin skin;
@@ -19,40 +28,70 @@ public class Board implements Screen {
     private float height;
     private float aspectRatio;
 
+    private SpriteBatch batch;
+    private Texture backgroundTexture;
+    private OrthographicCamera camera;
+    private FitViewport viewport;
+    private ArrayList<UnrevealedCard> Hand;
+
+
+
     public Board(Game game) {
         this.game = game;
         aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
         height = 1000;
         width = height * aspectRatio;
 
-        stage = new Stage(new FitViewport(width, height));
+        batch = new SpriteBatch();
+
+        backgroundTexture = new Texture("Board1728x1117.png");
+
+        camera = new OrthographicCamera();
+
+        camera.position.set(width / 2f, height / 2f, 0);
+        viewport = new FitViewport(width, height, camera);
+
+        viewport.apply();
+
+        stage = new Stage(viewport);
         skin = new Skin(Gdx.files.internal("Board/skin.json"));
         MyInputProcessor myInputProcessor = new MyInputProcessor();
         InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor,stage);
         Gdx.input.setInputProcessor(multiplexer);
 
+        Hand = new ArrayList<>();
 
-        Table table = new Table();
-        table.setBackground(skin.getDrawable("Board1728x1117"));
-        table.padLeft(0.0f);
-        table.padRight(100.0f);
-        table.padTop(0.0f);
-        table.padBottom(26.0f);
-        table.align(Align.bottomRight);
-        table.setFillParent(true);
+        for (int i = 0; i < 2; i++) {
+            addCard();
+        }
+
 
         ImageButton imageButton = new ImageButton(skin, "Hit");
-        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(100f);
+        imageButton.setPosition(width - width/5,300);
+        stage.addActor(imageButton);
+        imageButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                addCard();
+            }
+        });
 
-        table.row();
         imageButton = new ImageButton(skin, "Stand");
-        table.add(imageButton).padTop(0f).padBottom(50f).spaceBottom(0f).padRight(100f);
-
-        table.row();
+        imageButton.setPosition(width-width/5,200);
+        stage.addActor(imageButton);
         imageButton = new ImageButton(skin, "Double");
-        table.add(imageButton).padTop(0f).padBottom(70f).padRight(100f);
-        stage.addActor(table);
+        imageButton.setPosition(width -width/5,100);
+        stage.addActor(imageButton);
     }
+
+    void addCard(){
+        UnrevealedCard unrevealedCard = new UnrevealedCard();
+        unrevealedCard.setAction(Hand.size());
+        stage.addActor(unrevealedCard.getImage());
+        Hand.add(unrevealedCard);
+
+    }
+
 
     @Override
     public void show() {
@@ -61,8 +100,12 @@ public class Board implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        ScreenUtils.clear(0, 0, 0, 0);
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        batch.draw(backgroundTexture, 0, 0,width,height);
+        batch.end();
         stage.act();
         stage.draw();
     }

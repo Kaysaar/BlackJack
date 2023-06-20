@@ -31,7 +31,6 @@ public class Homepage implements Screen {
 
     private float width;
     private float height;
-
     private float aspectRatio;
 
 
@@ -56,7 +55,6 @@ public class Homepage implements Screen {
         this.game = game;
 
         aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
-
         height = 1000;
         width = height * aspectRatio;
 
