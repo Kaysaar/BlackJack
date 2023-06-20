@@ -4,8 +4,12 @@ public class JoinRequestEvent {
 
     private String playerName;
 
-    JoinRequestEvent(String playerName) {
+    public JoinRequestEvent(String playerName) {
         this.playerName = playerName;
+
+    }
+
+    public JoinRequestEvent() {
 
     }
 

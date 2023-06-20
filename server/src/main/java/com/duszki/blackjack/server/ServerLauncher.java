@@ -16,12 +16,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.duszki.blackjack.shared.events.*;
+import com.esotericsoftware.minlog.Log;
 
 /**
  * Launches the server application.
  */
 public class ServerLauncher {
-    public static final int MAX_PLAYERS = 5;
+
+    public static final boolean DEBUG = true;
+    public static final int MAX_PLAYERS = 5000;
     Server server;
 //    int turn = 0;
 //    Deck newDeck;
@@ -51,6 +54,15 @@ public class ServerLauncher {
 //    Dealer croupier = new Dealer();
 
     public ServerLauncher() throws IOException {
+
+        if(DEBUG) {
+            Log.ERROR();
+            Log.WARN();
+            Log.INFO();
+            Log.DEBUG();
+            Log.TRACE();
+        }
+
         server = new Server(); /*{
             protected Connection newConnection() {
                 // By providing our own connection implementation, we can store per
@@ -68,7 +80,6 @@ public class ServerLauncher {
         bindServer(Network.port);
 
         server.start();
-
 
     }
 
@@ -119,6 +130,11 @@ public class ServerLauncher {
                     RequestGameStartEvent requestGameStartEvent = (RequestGameStartEvent) object;
                     hasGameStarted = true;
                     initialize_game();
+
+                    GameStartedEvent gameStartedEvent = new GameStartedEvent();
+
+                    server.sendToAllTCP(gameStartedEvent);
+
                 }
 
             }
