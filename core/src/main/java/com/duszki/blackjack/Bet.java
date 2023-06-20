@@ -49,6 +49,7 @@ public class Bet  {
             public void clicked(InputEvent event, float x, float y) {
                 string = textField.getText();
                 textField.setText("");
+                table.setVisible(false);
             }
         });
 
@@ -61,7 +62,5 @@ public class Bet  {
     public String getBet(){
         return this.string;
     }
-
-
 
 }

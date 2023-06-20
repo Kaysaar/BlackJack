@@ -112,7 +112,7 @@ public class Board implements Screen {
 
                 HitEvent hitEvent = new HitEvent();
                 client.sendTCP(hitEvent);
-
+                buttonDouble.setVisible(false);
             }
         });
 
@@ -184,7 +184,6 @@ public class Board implements Screen {
 
         Bet bet = new Bet(this);
         stage.addActor(bet.getTable());
-
 
 
 
