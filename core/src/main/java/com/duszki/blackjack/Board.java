@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -57,6 +58,7 @@ public class Board implements Screen {
 
     private int cardsInHand;
 
+    private ArrayList<UnrevealedCard> Dealer;
 
     public Board(Game game) {
 
@@ -92,7 +94,13 @@ public class Board implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor, stage);
         Gdx.input.setInputProcessor(multiplexer);
 
+
         Hand = new ArrayList<>();
+        Dealer = new ArrayList<>();
+
+        for (int i = 0; i < 2; i++) {
+                addCardforDealer();
+        }
 
         cardsInHand = 0;
 
@@ -181,12 +189,26 @@ public class Board implements Screen {
 
     }
 
-    void addCardBoard() {
-        UnrevealedCard unrevealedCard = new UnrevealedCard();
+
+    void addCardBoard(){
+        UnrevealedCard unrevealedCard = new UnrevealedCard("10_of_clubs");
         unrevealedCard.setAction(Hand.size());
         stage.addActor(unrevealedCard.getImage());
         Hand.add(unrevealedCard);
 
+    }
+
+    void addCardforDealer(){
+        UnrevealedCard unrevealedCard;
+        if(Dealer.size() == 0) {
+            unrevealedCard = new UnrevealedCard("back");
+        }else {
+            unrevealedCard = new UnrevealedCard("10_of_clubs");
+        }
+
+        unrevealedCard.setDealerAction(Dealer.size());
+        stage.addActor(unrevealedCard.getImage());
+        Dealer.add(unrevealedCard);
     }
 
 
