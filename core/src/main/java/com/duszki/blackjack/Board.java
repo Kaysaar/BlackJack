@@ -138,6 +138,8 @@ public class Board implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 DoubleDownEvent doubleEvent = new DoubleDownEvent();
                 client.sendTCP(doubleEvent);
+                buttonDouble.setVisible(false);
+
             }
         });
 
