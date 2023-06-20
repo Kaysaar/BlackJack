@@ -66,6 +66,10 @@ public class Login {
         });
 
 
+
+        textField2.setText("localhost");
+        textField3.setText("5000");
+        textField4.setText("Zbigniew");
         // Client setup
 
         final Client client = new Client();

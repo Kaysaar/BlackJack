@@ -7,8 +7,8 @@ public class Card {
     private static final int STRONG_CARD_VALUE = 10;
     private static final int ACE_CARD_HIGH_VALUE = 11;
 
-    private final String suit;
-    private final String rank;
+    private String suit;
+    private String rank;
 
 
     public static List<String> getValidSuits() {
@@ -25,6 +25,10 @@ public class Card {
         this.rank = rank;
     }
 
+    public Card() {
+
+    }
+
     public String getSuit() {
         return suit;
     }
@@ -34,7 +38,7 @@ public class Card {
     }
 
     public String toString() {
-        return rank + " of " + suit;
+        return rank + "_of_" + suit;
     }
 
 }

@@ -40,6 +40,7 @@ public class Network {
         kryo.register(PlayerTransferData.class);
         kryo.register(DataToTransfer.class);
         kryo.register(WinnersOfRound.class);
+        kryo.register(HitEvent.class);
 
 
     }

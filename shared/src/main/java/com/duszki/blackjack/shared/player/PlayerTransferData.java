@@ -13,6 +13,10 @@ public class PlayerTransferData {
         setName(Name);
         setCards(Cards);
     }
+
+    public PlayerTransferData() {
+
+    }
     public boolean isYourTurn;
     public boolean isGameOver;
     public boolean hasLostRound;

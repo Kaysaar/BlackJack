@@ -6,12 +6,12 @@ import java.util.ArrayList;
 
 public class Shoe {
 
-    static final int deckQuantity = 8;
+    static final int DECK_QUANTITY = 8;
     private ArrayList<Deck> deckList = new ArrayList<>();
 
     public Shoe(){
 
-        for(int i = 0; i < deckQuantity; i++){
+        for(int i = 0; i < DECK_QUANTITY; i++){
             Deck deck = new Deck();
             deckList.add(deck);
         }

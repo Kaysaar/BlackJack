@@ -15,6 +15,10 @@ public class Player {
 
     private PlayerServerData playerServerData;
 
+    public Player() {
+
+    }
+
     public static Player init(){
         Player player = new Player();
         player.client = new Client();

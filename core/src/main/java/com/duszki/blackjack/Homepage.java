@@ -17,6 +17,7 @@ import com.badlogic.gdx.audio.Music;
 
 public class Homepage implements Screen {
 
+    public static final boolean MUSIC_OFF = true;
 
     private Game game;
     private Stage stage;
@@ -90,7 +91,10 @@ public class Homepage implements Screen {
         // Music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Kevin MacLeod - George Street Shuffle.ogg"));
         music.setLooping(true);
-        music.play();
+        if(!MUSIC_OFF) {
+            music.play();
+
+        }
 
         // Button play
         Skin play = new Skin(Gdx.files.internal("skins/Play/PlayButton.json"));
