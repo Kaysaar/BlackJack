@@ -31,10 +31,15 @@ public class Bet  {
         table = new Table();
         table.setBackground(bet.getDrawable("back2_0"));
         table.setSize(300, 200);
-        textField = new TextField("", bet);
-        table.add(textField).padTop(70.0f);
+
+        TextField textField = new TextField("", bet);
+        table.add(textField).padTop(200.0f).row();
         table.setPosition(width - width / 5,500);
 
+        Skin bet_button = new Skin(Gdx.files.internal("bet_button/bet_button.json"));
+        ImageButton imageButton = new ImageButton(bet_button, "default");
+        table.add(imageButton).padTop(40.0f).row();
+        table.setPosition(width - width / 5,500);
     }
 
     public Table getTable() {
