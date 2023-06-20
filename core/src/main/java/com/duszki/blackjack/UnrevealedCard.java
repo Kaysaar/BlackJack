@@ -17,14 +17,14 @@ public class UnrevealedCard {
     private float aspectRatio;
     private float height;
     private float width;
+    private Texture texture;
 
 
     public UnrevealedCard(){
         aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
         height = 1000;
         width = height * aspectRatio;
-
-        Texture texture = new Texture(Gdx.files.internal("Cards/Back.png"));
+        texture = new Texture(Gdx.files.internal("Cards/Back.png"));
         image = new Image(texture);
         image.setPosition(width/2 + width/4,1200);
         moveToAction = new MoveToAction();

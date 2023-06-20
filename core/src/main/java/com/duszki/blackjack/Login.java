@@ -103,5 +103,4 @@ public class Login {
     public Table getTable() {
         return table;
     }
-
 }
