@@ -67,8 +67,6 @@ public class Loading implements Screen {
 
         Gdx.input.setInputProcessor(multiplexer);
 
-//        client = Blackjack.getInstance().getClient();
-
         client = NetworkManager.getClient();
 
         startGameButton.addListener(new ClickListener() {
@@ -114,10 +112,6 @@ public class Loading implements Screen {
         stage.draw();
         stage.act();
 
-//        elapsedTime += delta;
-//        if (elapsedTime >= delaySeconds) {
-//           game.setScreen(new  Board(game));
-//        }
     }
 
     @Override

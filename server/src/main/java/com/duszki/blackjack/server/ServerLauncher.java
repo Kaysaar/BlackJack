@@ -17,12 +17,14 @@ import java.util.List;
 
 import com.duszki.blackjack.shared.events.*;
 import com.esotericsoftware.minlog.Log;
+import com.duszki.blackjack.shared.network.Network;
 
 /**
  * Launches the server application.
  */
 public class ServerLauncher {
 
+    static public final int PORT = 5000;
     public static final boolean DEBUG = true;
     public static final int MAX_PLAYERS = 5000;
     Server server;
@@ -73,11 +75,12 @@ public class ServerLauncher {
 
         // For consistency, the classes to be sent over the network are
         // registered by the same method for both the client and server.
+
         Network.register(server);
 
         addAllListeners();
 
-        bindServer(Network.port);
+        bindServer(PORT);
 
         server.start();
 
