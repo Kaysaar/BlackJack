@@ -41,7 +41,6 @@ public class Board implements Screen {
     private float width;
     private float height;
     private float aspectRatio;
-
     private SpriteBatch batch;
     private Texture backgroundTexture;
     private OrthographicCamera camera;
@@ -95,6 +94,12 @@ public class Board implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor, stage);
         Gdx.input.setInputProcessor(multiplexer);
 
+        Bet bet = new Bet(this);
+        stage.addActor(bet.getTable());
+
+        Balance balance =  new Balance(this);
+        stage.addActor(balance.getTable());
+
 
         Hand = new ArrayList<>();
         Dealer = new ArrayList<>();
@@ -114,6 +119,7 @@ public class Board implements Screen {
                 HitEvent hitEvent = new HitEvent();
                 client.sendTCP(hitEvent);
                 buttonDouble.setVisible(false);
+
             }
         });
 
@@ -188,8 +194,7 @@ public class Board implements Screen {
 
         });
 
-        Bet bet = new Bet(this);
-        stage.addActor(bet.getTable());
+
 
 
 
