@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -40,7 +41,6 @@ public class Board implements Screen {
     private float width;
     private float height;
     private float aspectRatio;
-
     private SpriteBatch batch;
     private Texture backgroundTexture;
     private OrthographicCamera camera;
@@ -96,13 +96,15 @@ public class Board implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer(myInputProcessor, stage);
         Gdx.input.setInputProcessor(multiplexer);
 
+        Bet bet = new Bet(this);
+        stage.addActor(bet.getTable());
+
+        Balance balance =  new Balance(this);
+        stage.addActor(balance.getTable());
+
 
         Hand = new ArrayList<>();
         Dealer = new ArrayList<>();
-
-//        for (int i = 0; i < 2; i++) {
-//                addCardforDealer();
-//        }
 
         cardsInHand = 0;
 
@@ -117,12 +119,14 @@ public class Board implements Screen {
 
                 HitEvent hitEvent = new HitEvent();
                 client.sendTCP(hitEvent);
+                buttonDouble.setVisible(false);
 
             }
         });
 
         buttonStand = new ImageButton(skin, "Stand");
         buttonStand.setPosition(width - width / 5, 200);
+
         stage.addActor(buttonStand);
 
         buttonStand.addListener(new ClickListener() {
@@ -130,12 +134,14 @@ public class Board implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 StandEvent standEvent = new StandEvent();
                 client.sendTCP(standEvent);
+
             }
         });
 
 
         buttonDouble = new ImageButton(skin, "Double");
         buttonDouble.setPosition(width - width / 5, 100);
+
         stage.addActor(buttonDouble);
 
         buttonDouble.addListener(new ClickListener() {
@@ -143,6 +149,8 @@ public class Board implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 DoubleDownEvent doubleEvent = new DoubleDownEvent();
                 client.sendTCP(doubleEvent);
+                buttonDouble.setVisible(false);
+
             }
         });
 
@@ -256,6 +264,18 @@ public class Board implements Screen {
         stage.addActor(unrevealedCard.getImage());
         Dealer.add(unrevealedCard);
     }
+
+    void removeCards(){
+        for (UnrevealedCard unrevealedCard : Hand) {
+            unrevealedCard.getImage().addAction(Actions.removeActor());
+        }
+        Hand.clear();
+        for (UnrevealedCard unrevealedCard : Dealer) {
+            unrevealedCard.getImage().addAction(Actions.removeActor());
+        }
+        Dealer.clear();
+    }
+
 
 
     @Override

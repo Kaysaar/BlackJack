@@ -1,0 +1,34 @@
+
+bet.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+buckground
+  rotate: false
+  xy: 1, 301
+  size: 724, 604
+  orig: 724, 604
+  offset: 0, 0
+  index: -1
+kursor
+  rotate: false
+  xy: 727, 815
+  size: 44, 90
+  orig: 44, 90
+  offset: 0, 0
+  index: -1
+label
+  rotate: false
+  xy: 1, 1
+  size: 426, 68
+  orig: 426, 68
+  offset: 0, 0
+  index: -1
+Roboto-Black(3)
+  rotate: false
+  xy: 1, 71
+  size: 506, 228
+  orig: 506, 228
+  offset: 0, 0
+  index: -1
