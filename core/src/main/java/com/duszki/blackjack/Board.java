@@ -104,8 +104,6 @@ public class Board implements Screen {
         Hand = new ArrayList<>();
         Dealer = new ArrayList<>();
 
-
-
         cardsInHand = 0;
 
 

@@ -10,7 +10,6 @@ public class Balance {
     private float width;
     private float height;
     private float aspectRatio;
-
     private Table table;
     private Board board;
     private Label balance;
