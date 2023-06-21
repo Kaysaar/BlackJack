@@ -1,5 +1,14 @@
 # Blackjack
 
+
+## How to run project
+
+In IntelliJ IDEA you can choose to open the build.gradle file and select "Open as Project" to get started.
+The way to run a game project that's probably the most reliable is to use Gradle tasks to do any part of the build/run process. The simplest way to do this is in the IDE itself, via View -> Tool Windows -> Gradle, and selecting tasks to perform, such as lwjgl3 -> Tasks -> application -> run.
+First you have to run the server, then you can run the client (lwjgl3).
+
+# Blackjack
+
 A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff).
 
 This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
