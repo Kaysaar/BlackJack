@@ -69,7 +69,7 @@ public class Login {
 
         textField2.setText("localhost");
         textField3.setText("5000");
-        textField4.setText("Zbigniew");
+        textField4.setText("Username");
         // Client setup
 
         final Client client = new Client();
