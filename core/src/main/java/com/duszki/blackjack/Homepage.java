@@ -17,6 +17,7 @@ import com.badlogic.gdx.audio.Music;
 
 public class Homepage implements Screen {
 
+    public static final boolean MUSIC_OFF = false;
 
     private Game game;
     private Stage stage;
@@ -31,7 +32,6 @@ public class Homepage implements Screen {
 
     private float width;
     private float height;
-
     private float aspectRatio;
 
 
@@ -56,7 +56,6 @@ public class Homepage implements Screen {
         this.game = game;
 
         aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
-
         height = 1000;
         width = height * aspectRatio;
 
@@ -92,7 +91,10 @@ public class Homepage implements Screen {
         // Music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Kevin MacLeod - George Street Shuffle.ogg"));
         music.setLooping(true);
-        music.play();
+        if(!MUSIC_OFF) {
+            music.play();
+
+        }
 
         // Button play
         Skin play = new Skin(Gdx.files.internal("skins/Play/PlayButton.json"));

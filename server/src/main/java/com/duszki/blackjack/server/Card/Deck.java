@@ -1,34 +1,39 @@
 package com.duszki.blackjack.server.Card;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import com.duszki.blackjack.shared.models.Card;
 
-import static com.duszki.blackjack.server.Card.Type.*;
+import java.util.LinkedList;
+import java.util.List;
+
+import static java.util.Collections.shuffle;
 
 public class Deck {
-    public static final int STRONGCARD = 10;
-    public ArrayList<Card> getCardsInsideDeck() {
-        return cardsInsideDeck;
+
+    public LinkedList<Card> getCardsInDeck() {
+        return cardsInDeck;
     }
 
-    private final ArrayList<Card> cardsInsideDeck = new ArrayList<>();
+    private LinkedList<Card> cardsInDeck;
 
-    public Deck(){
-        addCards(Spades);
-        addCards(Hearts);
-        addCards(Diamonds);
-        addCards(Clubs);
-        Collections.shuffle(cardsInsideDeck);
+    public Deck() {
+
+        cardsInDeck = new LinkedList<>();
+
+        List<String> cardRanks = Card.getValidRanks();
+        List<String> cardSuits = Card.getValidSuits();
+
+        for (String suit : cardSuits) {
+            for (String rank : cardRanks) {
+                cardsInDeck.add(new Card(suit, rank));
+            }
+        }
+
+        shuffle(cardsInDeck);
     }
-
-    void addCards(Type colors){
-        for (int i = 1; i < 11; i++) {
-            Card card = new Card(i,i,colors);
-            cardsInsideDeck.add(card);
+    public Card removeCard(){
+        if(cardsInDeck.isEmpty()){
+            return null;
         }
-        for (int i = 11; i < 14; i++) {
-            Card card = new Card(i,STRONGCARD,colors);
-            cardsInsideDeck.add(card);
-        }
+        return cardsInDeck.poll();
     }
 }

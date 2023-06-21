@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import com.esotericsoftware.kryonet.*;
+
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
@@ -19,6 +21,7 @@ public class Blackjack extends Game {
     public void create() {
         game = this;
         homepage = new Homepage(this);
+//        board = new Board(this);
         setScreen(homepage);
     }
 
@@ -37,4 +40,5 @@ public class Blackjack extends Game {
         super.dispose();
         homepage.dispose();
     }
+
 }
