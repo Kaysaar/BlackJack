@@ -17,7 +17,7 @@ import com.badlogic.gdx.audio.Music;
 
 public class Homepage implements Screen {
 
-    public static final boolean MUSIC_OFF = true;
+    public static final boolean MUSIC_OFF = false;
 
     private Game game;
     private Stage stage;
