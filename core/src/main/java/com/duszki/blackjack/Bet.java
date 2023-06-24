@@ -13,6 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import com.duszki.blackjack.shared.events.PlaceBetEvent;
+import com.esotericsoftware.kryonet.*;
+
 public class Bet  {
 
     private float width;
@@ -33,7 +36,7 @@ public class Bet  {
 
         final Skin[] bet = {new Skin(Gdx.files.internal("new_bet/new_bet.json"))};
         Skin bet_button = new Skin(Gdx.files.internal("bet_button/bet_button.json"));
-        ImageButton imageButton = new ImageButton(bet_button, "default");
+        ImageButton buttonBet = new ImageButton(bet_button, "default");
         table = new Table();
         table.padTop(150f);
         table.setBackground(bet[0].getDrawable("back2_0"));
@@ -41,13 +44,22 @@ public class Bet  {
 
         TextField textField = new TextField("", bet[0]);
         table.add(textField).padRight(20f);
-        imageButton.setSize(50,50);
-        table.add(imageButton);
-        table.setPosition(width/2 - 5 * imageButton.getWidth(),500 - 2*imageButton.getHeight());
-        imageButton.addListener(new ClickListener(){
+        buttonBet.setSize(50,50);
+        table.add(buttonBet);
+        table.setPosition(width/2 - 5 * buttonBet.getWidth(),500 - 2*buttonBet.getHeight());
+        buttonBet.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 string = textField.getText();
+
+                // kryonet send bet to server
+
+                PlaceBetEvent placeBetEvent = new PlaceBetEvent();
+                placeBetEvent.setBet(Integer.parseInt(string));
+
+                NetworkManager.getClient().sendTCP(placeBetEvent);
+
+
                 textField.setText("");
                 table.setVisible(false);
             }

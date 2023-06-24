@@ -13,7 +13,6 @@ import com.esotericsoftware.kryonet.Server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.duszki.blackjack.shared.events.*;
 import com.esotericsoftware.minlog.Log;
@@ -40,6 +39,8 @@ public class ServerLauncher {
     public boolean hasGameStarted = false;
 
     public static final int COINS_AT_START = 1000;
+
+    boolean allBetsPlaced = false;
 
     Shoe shoe;
     Dealer dealer;
@@ -189,7 +190,7 @@ public class ServerLauncher {
 
                     if (currentPlayer.getPlayerHand().getCardsInHand().size() == 2) {
                         int currTokens = currentPlayer.getTokens();
-                        int currStake = currentPlayer.getStake();
+                        int currStake = currentPlayer.getBet();
 
                         if (currentPlayer.getConnection() == connection) {
                             if (currStake == 0 || currStake * 2 > currTokens) {
@@ -214,7 +215,6 @@ public class ServerLauncher {
         });
 
 
-        // add disconnected listener
         server.addListener(new Listener() {
             @Override
             public void disconnected(Connection connection) {
@@ -226,6 +226,54 @@ public class ServerLauncher {
                 }
             }
         });
+
+        server.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof PlaceBetEvent) {
+                    PlaceBetEvent placeBetEvent = (PlaceBetEvent) object;
+
+                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
+
+                    if (currentPlayer.getConnection() == connection) {
+                        if (currentPlayer.getBet() == 0) {
+                            int currTokens = currentPlayer.getTokens();
+                            int currStake = placeBetEvent.getBet();
+                            if (currStake > currTokens) {
+                                NotValidatedToDoEvent response = new NotValidatedToDoEvent();
+                                response.setMessage("Not enough money to place bet");
+                                server.sendToTCP(connection.getID(), response);
+                                return;
+                            }
+                            placeBet(currentPlayer, placeBetEvent.getBet());
+                            server.sendToTCP(connection.getID(), packSinglePLayer(currentPlayer));
+                            sendGameUpdateToPlayers(packAllPlayersData());
+                        }
+
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void placeBet(PlayerServerData currentPlayer, int bet) {
+
+        currentPlayer.setBet(bet);
+        currentPlayer.setTokens(currentPlayer.getTokens() - bet);
+
+        // check if all players have placed their bets
+        boolean allBetsPlaced = true;
+        for (PlayerServerData player : storedPlayerData) {
+            if (player.getBet() == 0) {
+                allBetsPlaced = false;
+                break;
+            }
+        }
+
+        if (allBetsPlaced) {
+            startRound();
+        }
 
     }
 
@@ -352,10 +400,10 @@ public class ServerLauncher {
 
     public void doubleDown(PlayerServerData player) {
 
-        int currentStake = player.getStake();
+        int currentStake = player.getBet();
 
         player.setTokens(player.getTokens() - currentStake);
-        player.setStake(currentStake * 2);
+        player.setBet(currentStake * 2);
 
 
         player.getPlayerHand().addCard(shoe.getCardFromShoe());
@@ -397,7 +445,7 @@ public class ServerLauncher {
         for (PlayerServerData storedPlayerData : storedPlayerData) {
 
             storedPlayerData.setStand(false);
-            storedPlayerData.setStake(0);
+            storedPlayerData.setBet(0);
             storedPlayerData.getPlayerHand().clearHand();
 
 
@@ -446,9 +494,9 @@ public class ServerLauncher {
         for (PlayerServerData storedPlayerData : storedPlayerData) {
             if (storedPlayerData.getPlayerHand().getHandValue() <= MAX_HAND_VALUE) {
                 if (storedPlayerData.getPlayerHand().getHandValue() > dealer.getHand().getHandValue()) {
-                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getStake() * 2);
+                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet() * 2);
                 } else if (storedPlayerData.getPlayerHand().getHandValue() == dealer.getHand().getHandValue()) {
-                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getStake());
+                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
                 }
 
             }

@@ -14,7 +14,7 @@ public class PlayerServerData {
     private boolean hasLost;
     private boolean stand;
 
-    private int stake; // stake is the amount of tokens the player bets in a round
+    private int bet; // stake is the amount of tokens the player bets in a round
 
     public PlayerServerData(Connection connection, String playerName) {
         this.connection = connection;
@@ -66,11 +66,11 @@ public class PlayerServerData {
         return this.hasLost;
     }
 
-    public int getStake() {
-        return stake;
+    public int getBet() {
+        return bet;
     }
 
-    public void setStake(int i) {
-        this.stake = i;
+    public void setBet(int i) {
+        this.bet = i;
     }
 }
