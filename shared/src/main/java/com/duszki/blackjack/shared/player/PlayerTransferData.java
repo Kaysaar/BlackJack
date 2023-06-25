@@ -9,6 +9,8 @@ public class PlayerTransferData {
 
     private ArrayList<Card> cards;
 
+    private int balance;
+
     public PlayerTransferData(String Name , ArrayList<Card> Cards ) {
         setName(Name);
         setCards(Cards);
@@ -60,6 +62,14 @@ public class PlayerTransferData {
 
     public void setCards(ArrayList<Card> cards){
         this.cards = cards;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    public int getBalance() {
+        return balance;
     }
 
 }

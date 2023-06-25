@@ -22,9 +22,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 import com.duszki.blackjack.shared.data.*;
-import com.duszki.blackjack.shared.events.DoubleDownEvent;
-import com.duszki.blackjack.shared.events.HitEvent;
-import com.duszki.blackjack.shared.events.StandEvent;
+import com.duszki.blackjack.shared.events.*;
 import com.duszki.blackjack.shared.models.Card;
 import com.duszki.blackjack.shared.player.PlayerTransferData;
 import com.esotericsoftware.kryonet.Client;
@@ -97,9 +95,9 @@ public class Board implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
 
         Bet bet = new Bet(this);
-        stage.addActor(bet.getTable());
+//        stage.addActor(bet.getTable());
 
-        Balance balance =  new Balance(this);
+        Balance balance = new Balance(this);
         stage.addActor(balance.getTable());
 
 
@@ -156,8 +154,46 @@ public class Board implements Screen {
 
         client.addListener(new Listener() {
             public void received(Connection connection, Object object) {
+                if (object instanceof RoundStartEvent) {
+                    stage.addActor(bet.getTable());
+
+                }
+            }
+        });
+
+        bet.getButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+                // send bet to server
+                PlaceBetEvent placeBetEvent = new PlaceBetEvent();
+                String betValue = bet.getBet();
+
+                int betInt;
+
+                try {
+                    betInt = Integer.parseInt(betValue);
+                } catch (NumberFormatException e) {
+                    return;
+                }
+
+                // remove bet actor from stage
+                stage.getActors().removeValue(bet.getTable(), true);
+
+                placeBetEvent.setBet(betInt);
+
+                client.sendTCP(placeBetEvent);
+
+
+            }
+        });
+
+        client.addListener(new Listener() {
+            public void received(Connection connection, Object object) {
                 if (object instanceof PlayerTransferData) {
                     PlayerTransferData request = (PlayerTransferData) object;
+
+                    balance.setBalance(Integer.toString(request.getBalance()));
 
                     ArrayList<Card> cards = request.getCards();
                     if (cards.size() == 2 && cardsInHand == 0) {
@@ -265,7 +301,7 @@ public class Board implements Screen {
         Dealer.add(unrevealedCard);
     }
 
-    void removeCards(){
+    void removeCards() {
         for (UnrevealedCard unrevealedCard : Hand) {
             unrevealedCard.getImage().addAction(Actions.removeActor());
         }
@@ -275,7 +311,6 @@ public class Board implements Screen {
         }
         Dealer.clear();
     }
-
 
 
     @Override

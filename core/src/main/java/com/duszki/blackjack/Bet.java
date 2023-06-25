@@ -25,6 +25,7 @@ public class Bet  {
     private Board board;
     private TextField textField;
     private String string;
+    ImageButton buttonBet;
 
     public Bet(Board board) {
 
@@ -36,7 +37,7 @@ public class Bet  {
 
         final Skin[] bet = {new Skin(Gdx.files.internal("new_bet/new_bet.json"))};
         Skin bet_button = new Skin(Gdx.files.internal("bet_button/bet_button.json"));
-        ImageButton buttonBet = new ImageButton(bet_button, "default");
+        buttonBet = new ImageButton(bet_button, "default");
         table = new Table();
         table.padTop(150f);
         table.setBackground(bet[0].getDrawable("back2_0"));
@@ -73,6 +74,10 @@ public class Bet  {
 
     public String getBet(){
         return this.string;
+    }
+
+    public ImageButton getButton() {
+        return buttonBet;
     }
 
 }

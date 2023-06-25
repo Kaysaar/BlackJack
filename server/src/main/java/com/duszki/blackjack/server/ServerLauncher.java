@@ -38,7 +38,7 @@ public class ServerLauncher {
 
     public boolean hasGameStarted = false;
 
-    public static final int COINS_AT_START = 1000;
+    public static final int COINS_AT_START = 2000;
 
     boolean allBetsPlaced = false;
 
@@ -119,24 +119,58 @@ public class ServerLauncher {
 
                     server.sendToAllTCP(gameStartedEvent);
 
-                    startRound();
-
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
-                    for (PlayerServerData player : storedPlayerData) {
-                        server.sendToTCP(player.getConnection().getID(), packSinglePLayer(player));
-                    }
+                    RoundStartEvent roundStartEvent = new RoundStartEvent();
+                    server.sendToAllTCP(roundStartEvent);
 
-                    DataToTransfer newData = packAllPlayersData();
+//                    RequestBetEvent requestBetEvent = new RequestBetEvent();
+//                    server.sendToAllTCP(requestBetEvent);
 
-                    sendGameUpdateToPlayers(newData);
+//                    startRound();
+//
+//                    try {
+//                        Thread.sleep(2000);
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//
+//                    for (PlayerServerData player : storedPlayerData) {
+//                        server.sendToTCP(player.getConnection().getID(), packSinglePLayer(player));
+//                    }
+//
+//                    DataToTransfer newData = packAllPlayersData();
+//
+//                    sendGameUpdateToPlayers(newData);
 
                 }
 
+            }
+        });
+
+        server.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof PlaceBetEvent) {
+
+                    PlaceBetEvent placeBetEvent = (PlaceBetEvent) object;
+
+                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
+
+                    if (currentPlayer.getConnection() == connection) {
+                        if (currentPlayer.getTokens() >= placeBetEvent.getBet()) {
+                            currentPlayer.setBet(placeBetEvent.getBet());
+                            currentPlayer.setTokens(currentPlayer.getTokens() - placeBetEvent.getBet());
+                            server.sendToTCP(connection.getID(), packSinglePLayer(currentPlayer));
+//                            sendGameUpdateToPlayers(packAllPlayersData());
+                        }
+                    }
+
+                }
             }
         });
 
@@ -227,33 +261,33 @@ public class ServerLauncher {
             }
         });
 
-        server.addListener(new Listener() {
-            @Override
-            public void received(Connection connection, Object object) {
-                if (object instanceof PlaceBetEvent) {
-                    PlaceBetEvent placeBetEvent = (PlaceBetEvent) object;
-
-                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
-
-                    if (currentPlayer.getConnection() == connection) {
-                        if (currentPlayer.getBet() == 0) {
-                            int currTokens = currentPlayer.getTokens();
-                            int currStake = placeBetEvent.getBet();
-                            if (currStake > currTokens) {
-                                NotValidatedToDoEvent response = new NotValidatedToDoEvent();
-                                response.setMessage("Not enough money to place bet");
-                                server.sendToTCP(connection.getID(), response);
-                                return;
-                            }
-                            placeBet(currentPlayer, placeBetEvent.getBet());
-                            server.sendToTCP(connection.getID(), packSinglePLayer(currentPlayer));
-                            sendGameUpdateToPlayers(packAllPlayersData());
-                        }
-
-                    }
-                }
-            }
-        });
+//        server.addListener(new Listener() {
+//            @Override
+//            public void received(Connection connection, Object object) {
+//                if (object instanceof PlaceBetEvent) {
+//                    PlaceBetEvent placeBetEvent = (PlaceBetEvent) object;
+//
+//                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
+//
+//                    if (currentPlayer.getConnection() == connection) {
+//                        if (currentPlayer.getBet() == 0) {
+//                            int currTokens = currentPlayer.getTokens();
+//                            int currStake = placeBetEvent.getBet();
+//                            if (currStake > currTokens) {
+//                                NotValidatedToDoEvent response = new NotValidatedToDoEvent();
+//                                response.setMessage("Not enough money to place bet");
+//                                server.sendToTCP(connection.getID(), response);
+//                                return;
+//                            }
+//                            placeBet(currentPlayer, placeBetEvent.getBet());
+//                            server.sendToTCP(connection.getID(), packSinglePLayer(currentPlayer));
+//                            sendGameUpdateToPlayers(packAllPlayersData());
+//                        }
+//
+//                    }
+//                }
+//            }
+//        });
 
     }
 
@@ -368,6 +402,7 @@ public class ServerLauncher {
         if (getCurrentTurnPlayer().getConnection().getID() == player.getConnection().getID()) {
             toReturn.setYourTurn(true);
             toReturn.setGameOver(isGameOver);
+            toReturn.setBalance(player.getTokens());
             //TODO diffriceante when round has been lost and where round is not yet over
             toReturn.setHavelostRound(false);
         }

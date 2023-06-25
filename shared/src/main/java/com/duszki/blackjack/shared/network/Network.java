@@ -27,6 +27,7 @@ public class Network {
         kryo.register(Hand.class);
         kryo.register(ArrayList.class);
 
+        // events
         kryo.register(JoinRequestEvent.class);
         kryo.register(JoinResponseEvent.class);
         kryo.register(DoubleDownEvent.class);
@@ -41,6 +42,10 @@ public class Network {
         kryo.register(DataToTransfer.class);
         kryo.register(WinnersOfRound.class);
         kryo.register(HitEvent.class);
+        kryo.register(RequestBetEvent.class);
+        kryo.register(PlaceBetEvent.class);
+
+        kryo.register(RoundStartEvent.class);
 
 
     }
