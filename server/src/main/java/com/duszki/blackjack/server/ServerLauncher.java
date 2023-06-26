@@ -2,10 +2,10 @@ package com.duszki.blackjack.server;
 
 import com.duszki.blackjack.server.Card.*;
 import com.duszki.blackjack.server.Player.PlayerServerData;
-import com.duszki.blackjack.shared.data.DataToTransfer;
+import com.duszki.blackjack.shared.data.GameUpdateData;
+import com.duszki.blackjack.shared.data.PlayerData;
 import com.duszki.blackjack.shared.models.Card;
 import com.duszki.blackjack.shared.models.Hand;
-import com.duszki.blackjack.shared.player.PlayerTransferData;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -13,7 +13,6 @@ import com.esotericsoftware.kryonet.Server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.duszki.blackjack.shared.events.*;
 import com.esotericsoftware.minlog.Log;
@@ -26,11 +25,9 @@ public class ServerLauncher {
 
     static public final int PORT = 5000;
     public static final boolean DEBUG = true;
-    public static final int MAX_PLAYERS = 5000;
+    public static final int MAX_PLAYERS = 5;
     private static final int MAX_HAND_VALUE = 21;
     Server server;
-//    int turn = 0;
-//    Deck newDeck;
 
     LinkedList<PlayerServerData> storedPlayerData = new LinkedList<>();
     public boolean isGameOver = false;
@@ -41,20 +38,13 @@ public class ServerLauncher {
 
     public boolean hasGameStarted = false;
 
-    public static final int COINS_AT_START = 1000;
+    public static final int COINS_AT_START = 2000;
 
-//    static int points = 0;
-//    int currentTokensAtStake = 0;
-//    boolean gameMustEnd = false;
-//    boolean hasBegunSesion = false;
-//    boolean endTurn = false;
-//    boolean sesionEnded = false;
+    private boolean roundStarted = false;
 
 
     Shoe shoe;
     Dealer dealer;
-
-//    Dealer croupier = new Dealer();
 
     public ServerLauncher() throws IOException {
 
@@ -66,16 +56,7 @@ public class ServerLauncher {
 //            Log.TRACE();
         }
 
-        server = new Server(); /*{
-            protected Connection newConnection() {
-                // By providing our own connection implementation, we can store per
-                // connection state without a connection ID to state look up.
-                return new ServerConnettion();
-            }
-        }; */
-
-        // For consistency, the classes to be sent over the network are
-        // registered by the same method for both the client and server.
+        server = new Server();
 
         Network.register(server);
 
@@ -139,21 +120,17 @@ public class ServerLauncher {
 
                     server.sendToAllTCP(gameStartedEvent);
 
-                    startRound();
-
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
-                    for (PlayerServerData player : storedPlayerData) {
-                        server.sendToTCP(player.getConnection().getID(), packSinglePLayer(player));
-                    }
 
-//                    DataToTransfer newData = packAllPlayersData();
+                    RequestBetEvent requestBetEvent = new RequestBetEvent();
 
-//                    sendGameUpdateToPlayers(newData);
+                    server.sendToAllTCP(requestBetEvent);
+
 
                 }
 
@@ -163,16 +140,41 @@ public class ServerLauncher {
         server.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
+                if (object instanceof PlaceBetEvent) {
+
+                    PlaceBetEvent placeBetEvent = (PlaceBetEvent) object;
+
+                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
+
+                    if (currentPlayer.getConnection() == connection) {
+                        if (currentPlayer.getTokens() >= placeBetEvent.getBet()) {
+                            currentPlayer.setBet(placeBetEvent.getBet());
+                            currentPlayer.setTokens(currentPlayer.getTokens() - placeBetEvent.getBet());
+                            currentPlayer.setBetPlaced(true);
+                        }
+                    }
+
+                    if (areAllBetsPlaced()) {
+                        startRound();
+                    }
+
+                }
+            }
+        });
+
+        server.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
                 if (object instanceof HitEvent) {
+
+                    if (!roundStarted) return;
 
                     PlayerServerData currentPlayer = getPlayerByConnection(connection);
 
                     if (currentPlayer.getConnection() == connection) {
                         if (!currentPlayer.getStand()) {
                             hit(currentPlayer);
-                            server.sendToTCP(connection.getID(), packSinglePLayer(currentPlayer));
-                            sendGameUpdateToPlayers(packAllPlayersData());
-                            nextPlayer();
+                            sendGameUpdateToPlayers();
                         }
 
                     }
@@ -191,9 +193,7 @@ public class ServerLauncher {
 
                     if (currentPlayer.getConnection() == connection) {
                         stand(currentPlayer);
-                        server.sendToTCP(connection.getID(), packSinglePLayer(currentPlayer));
-                        sendGameUpdateToPlayers(packAllPlayersData());
-                        nextPlayer();
+                        sendGameUpdateToPlayers();
                     }
 
 
@@ -201,6 +201,7 @@ public class ServerLauncher {
 
             }
         });
+
         server.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
@@ -210,7 +211,7 @@ public class ServerLauncher {
 
                     if (currentPlayer.getPlayerHand().getCardsInHand().size() == 2) {
                         int currTokens = currentPlayer.getTokens();
-                        int currStake = currentPlayer.getStake();
+                        int currStake = currentPlayer.getBet();
 
                         if (currentPlayer.getConnection() == connection) {
                             if (currStake == 0 || currStake * 2 > currTokens) {
@@ -220,8 +221,7 @@ public class ServerLauncher {
                                 return;
                             }
                             doubleDown(currentPlayer);
-                            server.sendToTCP(connection.getID(), packSinglePLayer(currentPlayer));
-                            sendGameUpdateToPlayers(packAllPlayersData());
+                            sendGameUpdateToPlayers();
 
                         }
                     }
@@ -233,6 +233,55 @@ public class ServerLauncher {
 
             }
         });
+
+
+        server.addListener(new Listener() {
+            @Override
+            public void disconnected(Connection connection) {
+                PlayerServerData player = getPlayerByConnection(connection);
+                storedPlayerData.remove(player);
+                if (storedPlayerData.size() == 0) {
+                    resetGame();
+
+                }
+            }
+        });
+
+
+    }
+
+    private void sendGameUpdateToPlayers() {
+
+        for (PlayerServerData player : storedPlayerData) {
+            GameUpdateData gameUpdateData = getGameUpdateDataForPlayer(player);
+
+            server.sendToTCP(player.getConnection().getID(), gameUpdateData);
+
+        }
+
+
+    }
+
+    private GameUpdateData getGameUpdateDataForPlayer(PlayerServerData player) {
+
+        GameUpdateData gameUpdateData = new GameUpdateData();
+        gameUpdateData.setDealerHand(dealer.getHand());
+        gameUpdateData.getYourData().setHand(player.getPlayerHand());
+        gameUpdateData.getYourData().setTokens(player.getTokens());
+
+        for (PlayerServerData otherPlayer : storedPlayerData) {
+            if (otherPlayer != player) {
+                PlayerData otherPlayerData = new PlayerData();
+                otherPlayerData.setHand(otherPlayer.getPlayerHand());
+                otherPlayerData.setBet(otherPlayer.getBet());
+                otherPlayerData.setTokens(otherPlayer.getTokens());
+                gameUpdateData.getOtherPlayersData().add(otherPlayerData);
+            }
+        }
+
+
+        return gameUpdateData;
+
     }
 
     public void bindServer(int port) {
@@ -243,6 +292,14 @@ public class ServerLauncher {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void resetGame() {
+        hasGameStarted = false;
+        storedPlayerData.clear();
+        dealer.getHand().clearHand();
+        finalRound = false;
+//        initialize_game();
     }
 
     public void initialize_game() {
@@ -259,14 +316,36 @@ public class ServerLauncher {
 
     }
 
-    public void startRound() {
+    public void resetRound() {
 
         currentPlayerCursor = 0;
-        Card card_from_deck_first;
-        Card card_from_deck_second;
+        dealer.getHand().clearHand();
         for (PlayerServerData player : storedPlayerData) {
             player.getPlayerHand().clearHand();
             player.setStand(false);
+        }
+
+        // send game update to all
+        sendGameUpdateToPlayers();
+
+        sendBetRequestToPlayers();
+
+    }
+
+    public void sendBetRequestToPlayers() {
+
+        server.sendToAllTCP(new RequestBetEvent());
+
+    }
+
+    public void startRound() {
+
+//        currentPlayerCursor = 0;
+        Card card_from_deck_first;
+        Card card_from_deck_second;
+        for (PlayerServerData player : storedPlayerData) {
+//            player.getPlayerHand().clearHand();
+//            player.setStand(false);
             card_from_deck_first = shoe.getCardFromShoe();
             card_from_deck_second = shoe.getCardFromShoe();
             if (card_from_deck_second == null || card_from_deck_first == null) {
@@ -287,107 +366,120 @@ public class ServerLauncher {
             card_from_deck_first = shoe.getCardFromShoe();
             card_from_deck_second = shoe.getCardFromShoe();
         }
+//        dealer.getHand().clearHand();
         dealer.getHand().addCard(card_from_deck_first);
         dealer.getHand().addCard(card_from_deck_second);
-    }
 
 
-    public void sendGameUpdateToPlayers(DataToTransfer updatedPackage) {
-        server.sendToAllTCP(updatedPackage);
-    }
+        // send updates to all players
+        for (PlayerServerData player : storedPlayerData) {
 
-    public DataToTransfer packAllPlayersData() {
+            GameUpdateData gameUpdateData = getGameUpdateDataForPlayer(player);
+            RoundStartEvent roundStartEvent = new RoundStartEvent();
+            roundStartEvent.setGameUpdateData(gameUpdateData);
 
-        DataToTransfer packedData = new DataToTransfer();
-        packedData.dealerHand = dealer.getHand();
-        packedData.otherPlayers = new ArrayList<>();
-        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
-            packedData.otherPlayers.add(new PlayerTransferData(storedPlayerDatum.playerName, storedPlayerDatum.getPlayerHand().getCardsInHand()));
+            server.sendToTCP(player.getConnection().getID(), roundStartEvent);
+
         }
 
-        // TODO
+        roundStarted = true;
 
-        return packedData;
     }
 
-    public PlayerTransferData packSinglePLayer(PlayerServerData player) {
-        PlayerTransferData toReturn = new PlayerTransferData(player.playerName, player.getPlayerHand().getCardsInHand());
-        if (getCurrentTurnPlayer().getConnection().getID() == player.getConnection().getID()) {
-            toReturn.setYourTurn(true);
-            toReturn.setGameOver(isGameOver);
-            //TODO diffriceante when round has been lost and where round is not yet over
-            toReturn.setHavelostRound(false);
-        }
-
-
-        return toReturn;
-    }
 
     public void hit(PlayerServerData player) {
         System.out.println("hit");
         System.out.println(player.getPlayerHand().getHandValue());
         player.getPlayerHand().addCard(shoe.getCardFromShoe());
-        if (player.getPlayerHand().getHandValue() > MAX_HAND_VALUE) {
-            player.setStand(true);
+        if (player.getPlayerHand().getHandValue() >= MAX_HAND_VALUE) {
+            stand(player);
         }
     }
 
     public void stand(PlayerServerData player) {
         player.setStand(true);
+
+        // if all players have stand then dealer will play
+        if (allPlayersHaveStand()) {
+            dealerPlay();
+
+        } else {
+            nextPlayer();
+        }
+
     }
 
     public void doubleDown(PlayerServerData player) {
 
-        int currentStake = player.getStake();
+        int currentStake = player.getBet();
 
         player.setTokens(player.getTokens() - currentStake);
-        player.setStake(currentStake * 2);
+        player.setBet(currentStake * 2);
 
 
         player.getPlayerHand().addCard(shoe.getCardFromShoe());
         player.setStand(true);
 
-//        player.getConnection().sendTCP(new EndTurnEvent());
-//        player.getConnection().sendTCP(new TransferData());
+        sendGameUpdateToPlayers();
 
     }
 
     public void nextPlayer() {
         PlayerServerData nextPlayer;
-        int iterator = 0;
-        while (true) {
 
-            currentPlayerCursor = (currentPlayerCursor + 1) % storedPlayerData.size();
-            nextPlayer = storedPlayerData.get(currentPlayerCursor);
-            if (!nextPlayer.getStand()) {
-                break;
-            }
-            iterator++;
-            if (iterator >= 20) { // 20 is random number simply when where would be situation that everyone has stand so we wont have infinite loop
-                nextPlayer = null;
-                break;
-            }
+        currentPlayerCursor = (currentPlayerCursor + 1) % storedPlayerData.size();
+        nextPlayer = storedPlayerData.get(currentPlayerCursor);
 
-        }
-        if (nextPlayer == null) {
-            endRound();
-            return;
-        }
         nextPlayer.getConnection().sendTCP(new YourTurnEvent());
     }
 
     public void endRound() {
-        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
-            if (!storedPlayerDatum.getStand()) {
-                return;
+
+        roundStarted = false;
+
+        checkWinners();
+
+        for (PlayerServerData storedPlayerData : storedPlayerData) {
+
+            storedPlayerData.setStand(false);
+            storedPlayerData.setBet(0);
+            storedPlayerData.getPlayerHand().clearHand();
+
+
+        }
+
+
+        sendGameUpdateToPlayers();
+
+        resetRound();
+
+    }
+
+    public boolean allPlayersHaveStand() {
+
+        System.out.println(storedPlayerData.size());
+        int i = 0;
+        for (PlayerServerData storedPlayerData : storedPlayerData) {
+            if (!storedPlayerData.getStand()) {
+                System.out.println("not all players have stand");
+                System.out.println(i++);
+                return false;
             }
         }
-        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
-            storedPlayerDatum.setStand(false);
-        }
-        stakeDivision();
-        packAllPlayersData();
+        System.out.println("all players have stand");
+        return true;
 
+    }
+
+    public void dealerPlay() {
+
+        while (dealer.getHand().getHandValue() < 17) {
+            dealer.getHand().addCard(shoe.getCardFromShoe());
+            sendGameUpdateToPlayers();
+        }
+
+
+        endRound();
 
     }
 
@@ -396,54 +488,19 @@ public class ServerLauncher {
         new ServerLauncher();
     }
 
-    public List<PlayerServerData> selectWinnersOfRound() {
-        List<PlayerServerData> winners = new ArrayList<>();
-        boolean atLeastOneBelow21 = false;
-        int smallestDistanceFrom21 = Math.abs(dealer.getHand().getHandValue() - MAX_HAND_VALUE);
-        if (smallestDistanceFrom21 <= MAX_HAND_VALUE) {
-            atLeastOneBelow21 = true;
-        }
-        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
-            if (Math.abs(storedPlayerDatum.getPlayerHand().getHandValue() - MAX_HAND_VALUE) < smallestDistanceFrom21) {
-                if (storedPlayerDatum.getPlayerHand().getHandValue() - MAX_HAND_VALUE >= 0) {
-                    atLeastOneBelow21 = true;
-                }
-                smallestDistanceFrom21 = (Math.abs(storedPlayerDatum.getPlayerHand().getHandValue() - MAX_HAND_VALUE));
-
-            }
-        }
-        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
-            if (storedPlayerDatum.getPlayerHand().getHandValue() == smallestDistanceFrom21) {
-                if (storedPlayerDatum.getPlayerHand().getHandValue() <= MAX_HAND_VALUE) {
-                    winners.add(storedPlayerDatum);
-                }
-                if (storedPlayerDatum.getPlayerHand().getHandValue() > MAX_HAND_VALUE && !atLeastOneBelow21) {
-                    winners.add(storedPlayerDatum);
+    public void checkWinners() {
+        for (PlayerServerData storedPlayerData : storedPlayerData) {
+            if (storedPlayerData.getPlayerHand().getHandValue() <= MAX_HAND_VALUE) {
+                if (storedPlayerData.getPlayerHand().getHandValue() > dealer.getHand().getHandValue()) {
+                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet() * 2);
+                } else if (storedPlayerData.getPlayerHand().getHandValue() == dealer.getHand().getHandValue()) {
+                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
                 }
 
             }
         }
-
-        // If winners is empty then it means that dealer has won the round
-        return winners;
     }
 
-    public void stakeDivision() {
-        int currentStake = 0;
-        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
-            currentStake += storedPlayerDatum.getStake();
-            storedPlayerDatum.setStake(0);
-        }
-        List<PlayerServerData> winnersOfRound = selectWinnersOfRound();
-        if (winnersOfRound.isEmpty()) {
-            return;
-        }
-        int singleAward = currentStake / winnersOfRound.size();
-        for (PlayerServerData playerServerData : winnersOfRound) {
-            playerServerData.setTokens(playerServerData.getTokens() + singleAward);
-        }
-
-    }
 
     public PlayerServerData getPlayerByConnection(Connection connection) {
         for (PlayerServerData serverPlayer : storedPlayerData) {
@@ -458,6 +515,15 @@ public class ServerLauncher {
 
         return storedPlayerData.get(currentPlayerCursor);
 
+    }
+
+    public boolean areAllBetsPlaced() {
+        for (PlayerServerData storedPlayerData : storedPlayerData) {
+            if (storedPlayerData.getBet() == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

@@ -1,12 +1,10 @@
 package com.duszki.blackjack.shared.network;
 
-import com.duszki.blackjack.shared.data.DataToTransfer;
-import com.duszki.blackjack.shared.data.WinnersOfRound;
+import com.duszki.blackjack.shared.data.GameUpdateData;
+import com.duszki.blackjack.shared.data.PlayerData;
 import com.duszki.blackjack.shared.events.*;
 import com.duszki.blackjack.shared.models.Card;
 import com.duszki.blackjack.shared.models.Hand;
-import com.duszki.blackjack.shared.player.HandTransferData;
-import com.duszki.blackjack.shared.player.PlayerTransferData;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -27,6 +25,7 @@ public class Network {
         kryo.register(Hand.class);
         kryo.register(ArrayList.class);
 
+        // events
         kryo.register(JoinRequestEvent.class);
         kryo.register(JoinResponseEvent.class);
         kryo.register(DoubleDownEvent.class);
@@ -36,11 +35,15 @@ public class Network {
         kryo.register(RequestGameStartEvent.class);
         kryo.register(StandEvent.class);
         kryo.register(YourTurnEvent.class);
-        kryo.register(HandTransferData.class);
-        kryo.register(PlayerTransferData.class);
-        kryo.register(DataToTransfer.class);
-        kryo.register(WinnersOfRound.class);
+
         kryo.register(HitEvent.class);
+        kryo.register(RequestBetEvent.class);
+        kryo.register(PlaceBetEvent.class);
+
+        kryo.register(RoundStartEvent.class);
+
+        kryo.register(GameUpdateData.class);
+        kryo.register(PlayerData.class);
 
 
     }

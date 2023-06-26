@@ -14,13 +14,13 @@ public class PlayerServerData {
     private boolean hasLost;
     private boolean stand;
 
-    private int stake; // stake is the amount of tokens the player bets in a round
+    private boolean betPlaced = false;
+
+    private int bet;
 
     public PlayerServerData(Connection connection, String playerName) {
         this.connection = connection;
         this.playerName = playerName;
-//        this.playerHand = new Hand();
-//        this.coins = 1000;
         this.stand = false;
         this.hasLost = false;
 
@@ -66,11 +66,21 @@ public class PlayerServerData {
         return this.hasLost;
     }
 
-    public int getStake() {
-        return stake;
+    public int getBet() {
+        return bet;
     }
 
-    public void setStake(int i) {
-        this.stake = i;
+    public void setBet(int i) {
+        this.bet = i;
     }
+
+    public boolean getBetPlaced() {
+        return betPlaced;
+    }
+
+    public void setBetPlaced(boolean betPlaced) {
+        this.betPlaced = betPlaced;
+    }
+
+
 }

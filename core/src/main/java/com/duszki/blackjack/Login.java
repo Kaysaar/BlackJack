@@ -6,16 +6,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import com.duszki.blackjack.shared.data.DataToTransfer;
-import com.duszki.blackjack.shared.data.WinnersOfRound;
 import com.duszki.blackjack.shared.events.*;
 import com.duszki.blackjack.shared.models.Card;
 import com.duszki.blackjack.shared.models.Hand;
-import com.duszki.blackjack.shared.player.HandTransferData;
-import com.duszki.blackjack.shared.player.PlayerTransferData;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.*;
-import com.duszki.blackjack.shared.player.*;
 import com.duszki.blackjack.shared.network.Network;
 
 import java.util.ArrayList;

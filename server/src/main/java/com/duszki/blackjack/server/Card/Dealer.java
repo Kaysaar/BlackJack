@@ -1,9 +1,8 @@
 package com.duszki.blackjack.server.Card;
 
-import com.duszki.blackjack.server.Player.Player;
 import com.duszki.blackjack.shared.models.Hand;
 
-public class Dealer extends Player {
+public class Dealer {
 
     private Hand dealerHand;
 
@@ -14,4 +13,9 @@ public class Dealer extends Player {
     public Hand getHand() {
         return dealerHand;
     }
+
+    public void setHand(Hand hand) {
+        this.dealerHand = hand;
+    }
+
 }
