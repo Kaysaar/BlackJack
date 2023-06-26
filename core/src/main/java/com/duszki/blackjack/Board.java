@@ -1,34 +1,29 @@
 package com.duszki.blackjack;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import com.duszki.blackjack.shared.data.*;
 import com.duszki.blackjack.shared.events.*;
 import com.duszki.blackjack.shared.models.Card;
-import com.duszki.blackjack.shared.player.PlayerTransferData;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
+
+import com.duszki.blackjack.shared.models.*;
 
 public class Board implements Screen {
     private static final boolean DEBUG = true;
@@ -48,9 +43,8 @@ public class Board implements Screen {
     ImageButton buttonStand;
     ImageButton buttonDouble;
 
-    private ArrayList<UnrevealedCard> Hand;
+    private ArrayList<UnrevealedCard> hand;
 
-    private DataToTransfer currentGameState;
 
     private Client client;
 
@@ -58,7 +52,12 @@ public class Board implements Screen {
 
     private int cardsInDealer;
 
-    private ArrayList<UnrevealedCard> Dealer;
+    private ArrayList<UnrevealedCard> dealer;
+
+    private Hand dealerHand;
+
+    private PlayerData yourData;
+
 
     public Board(Game game) {
 
@@ -95,14 +94,14 @@ public class Board implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
 
         Bet bet = new Bet(this);
-//        stage.addActor(bet.getTable());
+        stage.addActor(bet.getTable());
 
         Balance balance = new Balance(this);
         stage.addActor(balance.getTable());
 
 
-        Hand = new ArrayList<>();
-        Dealer = new ArrayList<>();
+        hand = new ArrayList<>();
+        dealer = new ArrayList<>();
 
         cardsInHand = 0;
 
@@ -152,126 +151,141 @@ public class Board implements Screen {
             }
         });
 
+
         client.addListener(new Listener() {
+            @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof RoundStartEvent) {
-                    stage.addActor(bet.getTable());
+
+                    RoundStartEvent roundStartEvent = (RoundStartEvent) object;
+
+                    GameUpdateData gameUpdateData = roundStartEvent.getGameUpdateData();
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+//                    removeCards();
+
+                    balance.setBalance(Integer.toString(gameUpdateData.getYourData().getTokens()));
+
+                    Card card;
+                    for (int i = 0; i < 2; i++) {
+
+                        card = gameUpdateData.getYourData().getHand().getCardsInHand().get(i);
+                        Card finalCard = card;
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                addCardBoard(finalCard.toString());
+                            }
+                        });
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        card = gameUpdateData.getDealerHand().getCardsInHand().get(i);
+
+                        Card finalCard1 = card;
+
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                addCardforDealer(finalCard1.toString());
+                            }
+                        });
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
 
                 }
             }
+
         });
 
-        bet.getButton().addListener(new ClickListener() {
+        client.addListener(new Listener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-
-                // send bet to server
-                PlaceBetEvent placeBetEvent = new PlaceBetEvent();
-                String betValue = bet.getBet();
-
-                int betInt;
-
-                try {
-                    betInt = Integer.parseInt(betValue);
-                } catch (NumberFormatException e) {
-                    return;
-                }
-
-                // remove bet actor from stage
-                stage.getActors().removeValue(bet.getTable(), true);
-
-                placeBetEvent.setBet(betInt);
-
-                client.sendTCP(placeBetEvent);
-
-
-            }
-        });
-
-        client.addListener(new Listener() {
             public void received(Connection connection, Object object) {
-                if (object instanceof PlayerTransferData) {
-                    PlayerTransferData request = (PlayerTransferData) object;
+                if (object instanceof GameUpdateData) {
 
-                    balance.setBalance(Integer.toString(request.getBalance()));
+                    GameUpdateData gameUpdateData = (GameUpdateData) object;
 
-                    ArrayList<Card> cards = request.getCards();
-                    if (cards.size() == 2 && cardsInHand == 0) {
-                        cardsInHand = cards.size();
-                        for (Card card : cards) {
-                            System.out.println(card.toString());
-                            Gdx.app.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addCardBoard(card.toString());
-                                }
-                            });
+                    balance.setBalance(Integer.toString(gameUpdateData.getYourData().getTokens()));
 
-                        }
-                    } else {
-                        for (int i = cardsInHand; i < cards.size(); i++) {
-                            System.out.println(cards.get(i).toString());
-                            Card card = cards.get(i);
-                            Gdx.app.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addCardBoard(card.toString());
-                                }
-                            });
+                    Card card;
 
-                            cardsInHand++;
+                    if (gameUpdateData.getYourData().getHand().getCardsInHand().size() > hand.size()) {
+                        card = gameUpdateData.getYourData().getHand().getCardsInHand().get(hand.size());
+                        Card finalCard = card;
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                addCardBoard(finalCard.toString());
+                            }
+                        });
 
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
 
                     }
+
+                    if (gameUpdateData.getDealerHand().getCardsInHand().size() > dealer.size()) {
+                        card = gameUpdateData.getDealerHand().getCardsInHand().get(dealer.size());
+                        Card finalCard = card;
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                addCardforDealer(finalCard.toString());
+                            }
+                        });
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+
                 }
-
-
             }
 
         });
 
         client.addListener(new Listener() {
+            @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof DataToTransfer) {
-                    DataToTransfer request = (DataToTransfer) object;
+                if (object instanceof RequestBetEvent) {
 
+                    RequestBetEvent requestBetEvent = (RequestBetEvent) object;
 
-                    ArrayList<Card> cards = request.dealerHand.getCardsInHand();
-                    if (cards.size() == 2 && cardsInDealer == 0) {
-                        cardsInDealer = cards.size();
-                        for (Card card : cards) {
-                            System.out.println(card.toString());
-                            Gdx.app.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addCardforDealer(card.toString());
-                                }
-                            });
-
-                        }
-                    } else {
-                        for (int i = cardsInDealer; i < cards.size(); i++) {
-                            System.out.println(cards.get(i).toString());
-                            Card card = cards.get(i);
-                            Gdx.app.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addCardforDealer(card.toString());
-                                }
-                            });
-
-                            cardsInDealer++;
-
-                        }
-
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
+
+                    removeCards();
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            bet.getTable().setVisible(true);
+                        }
+                    });
                 }
-
-
             }
-
-
         });
 
 
@@ -280,9 +294,9 @@ public class Board implements Screen {
 
     void addCardBoard(String card) {
         UnrevealedCard unrevealedCard = new UnrevealedCard(card);
-        unrevealedCard.setAction(Hand.size());
+        unrevealedCard.setAction(hand.size());
         stage.addActor(unrevealedCard.getImage());
-        Hand.add(unrevealedCard);
+        hand.add(unrevealedCard);
 
     }
 
@@ -296,20 +310,20 @@ public class Board implements Screen {
 
         UnrevealedCard unrevealedCard = new UnrevealedCard(card);
 
-        unrevealedCard.setDealerAction(Dealer.size());
+        unrevealedCard.setDealerAction(dealer.size());
         stage.addActor(unrevealedCard.getImage());
-        Dealer.add(unrevealedCard);
+        dealer.add(unrevealedCard);
     }
 
     void removeCards() {
-        for (UnrevealedCard unrevealedCard : Hand) {
+        for (UnrevealedCard unrevealedCard : hand) {
             unrevealedCard.getImage().addAction(Actions.removeActor());
         }
-        Hand.clear();
-        for (UnrevealedCard unrevealedCard : Dealer) {
+        hand.clear();
+        for (UnrevealedCard unrevealedCard : dealer) {
             unrevealedCard.getImage().addAction(Actions.removeActor());
         }
-        Dealer.clear();
+        dealer.clear();
     }
 
 

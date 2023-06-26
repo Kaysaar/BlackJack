@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.duszki.blackjack.shared.events.PlaceBetEvent;
 import com.esotericsoftware.kryonet.*;
 
-public class Bet  {
+public class Bet {
 
     private float width;
     private float height;
@@ -24,7 +24,7 @@ public class Bet  {
     private Table table;
     private Board board;
     private TextField textField;
-    private String string;
+//    private String string;
     ImageButton buttonBet;
 
     public Bet(Board board) {
@@ -45,24 +45,35 @@ public class Bet  {
 
         TextField textField = new TextField("", bet[0]);
         table.add(textField).padRight(20f);
-        buttonBet.setSize(50,50);
+        buttonBet.setSize(50, 50);
         table.add(buttonBet);
-        table.setPosition(width/2 - 5 * buttonBet.getWidth(),500 - 2*buttonBet.getHeight());
-        buttonBet.addListener(new ClickListener(){
+        table.setPosition(width / 2 - 5 * buttonBet.getWidth(), 500 - 2 * buttonBet.getHeight());
+
+        table.setVisible(false);
+
+        buttonBet.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                string = textField.getText();
 
                 // kryonet send bet to server
 
                 PlaceBetEvent placeBetEvent = new PlaceBetEvent();
-                placeBetEvent.setBet(Integer.parseInt(string));
+
+                int providedBet;
+
+                try {
+                    providedBet = Integer.parseInt(textField.getText());
+                } catch (NumberFormatException e) {
+                    return;
+                }
+
+                placeBetEvent.setBet(providedBet);
 
                 NetworkManager.getClient().sendTCP(placeBetEvent);
 
+                table.setVisible(false);
 
                 textField.setText("");
-                table.setVisible(false);
             }
         });
 
@@ -72,12 +83,12 @@ public class Bet  {
         return table;
     }
 
-    public String getBet(){
-        return this.string;
-    }
+//    public String getBet() {
+//        return this.string;
+//    }
 
-    public ImageButton getButton() {
-        return buttonBet;
-    }
+//    public ImageButton getButton() {
+//        return buttonBet;
+//    }
 
 }
