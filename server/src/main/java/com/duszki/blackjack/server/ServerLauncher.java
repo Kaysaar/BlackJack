@@ -11,10 +11,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 import com.duszki.blackjack.shared.events.*;
 import com.esotericsoftware.minlog.Log;
@@ -236,13 +233,19 @@ public class ServerLauncher {
             }
         });
         server.addListener(new Listener() {
+            //Client info iterater thorugh hasmap by using this looop
+//            for (Map.Entry<String, Integer> stringIntegerEntry : response.getPlayersSorted().entrySet()) {
+//
+//            }
             @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof RequestCurrRankingEvent) {
                     PlayerServerData currentPlayer = getPlayerByConnection(connection);
                     if (currentPlayer.getConnection() == connection) {
-                        RequestCurrRankingEvent response = new RequestCurrRankingEvent();
+                        RequestCurrRankingEvent response = (RequestCurrRankingEvent) object;
+
                         response.setPlayersSorted(currentRanking());
+
                         server.sendToTCP(connection.getID(), response);
                     }
                 }
