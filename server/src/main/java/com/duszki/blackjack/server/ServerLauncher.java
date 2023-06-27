@@ -280,10 +280,11 @@ public class ServerLauncher {
 
     private HashMap<String, Integer> currentRanking() {
         HashMap<String, Integer> currValues = new HashMap<>();
-        Collections.sort(storedPlayerData, (d1, d2) -> {
+        ArrayList<PlayerServerData> copyOfStoredData = new ArrayList<>(storedPlayerData);
+        Collections.sort(copyOfStoredData, (d1, d2) -> {
             return d2.getTokens() - d1.getTokens();
         });
-        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
+        for (PlayerServerData storedPlayerDatum : copyOfStoredData) {
             currValues.put(storedPlayerDatum.playerName, storedPlayerDatum.getTokens());
         }
         return currValues;
