@@ -12,6 +12,8 @@ import com.esotericsoftware.kryonet.Server;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.duszki.blackjack.shared.events.*;
@@ -233,6 +235,20 @@ public class ServerLauncher {
 
             }
         });
+        server.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof RequestCurrRankingEvent) {
+                    PlayerServerData currentPlayer = getPlayerByConnection(connection);
+                    if (currentPlayer.getConnection() == connection) {
+                        RequestCurrRankingEvent response = new RequestCurrRankingEvent();
+                        response.setPlayersSorted(currentRanking());
+                        server.sendToTCP(connection.getID(), response);
+                    }
+                }
+
+            }
+        });
 
 
         server.addListener(new Listener() {
@@ -262,6 +278,17 @@ public class ServerLauncher {
 
     }
 
+    private HashMap<String, Integer> currentRanking() {
+        HashMap<String, Integer> currValues = new HashMap<>();
+        Collections.sort(storedPlayerData, (d1, d2) -> {
+            return d2.getTokens() - d1.getTokens();
+        });
+        for (PlayerServerData storedPlayerDatum : storedPlayerData) {
+            currValues.put(storedPlayerDatum.playerName, storedPlayerDatum.getTokens());
+        }
+        return currValues;
+    }
+
     private GameUpdateData getGameUpdateDataForPlayer(PlayerServerData player) {
 
         GameUpdateData gameUpdateData = new GameUpdateData();
@@ -283,6 +310,7 @@ public class ServerLauncher {
         return gameUpdateData;
 
     }
+
 
     public void bindServer(int port) {
         this.server.start();
