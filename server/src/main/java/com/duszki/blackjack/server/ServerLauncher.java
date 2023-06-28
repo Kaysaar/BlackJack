@@ -233,6 +233,14 @@ public class ServerLauncher {
 
             }
         });
+        server.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof RequestCurrNumberOfPlayersInLobbyEvent) {
+                    server.sendToTCP(connection.getID(),server.getConnections().size());
+                }
+            }
+        });
 
 
         server.addListener(new Listener() {
@@ -246,7 +254,6 @@ public class ServerLauncher {
                 }
             }
         });
-
 
     }
 
