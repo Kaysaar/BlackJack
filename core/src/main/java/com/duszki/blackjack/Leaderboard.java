@@ -20,11 +20,11 @@ public class Leaderboard {
     private Label forthPlace;
     private Label fifthPlace;
 
-    public Leaderboard(Board board){
+    public Leaderboard(){
         aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
         height = 1000;
         width = height * aspectRatio;
-        this.board = board;
+       // this.board = board;
 
         Skin skin = new Skin(Gdx.files.internal("Login/skins.json"));
 
