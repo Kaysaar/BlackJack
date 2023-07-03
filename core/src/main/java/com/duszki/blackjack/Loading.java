@@ -110,6 +110,27 @@ public class Loading implements Screen {
 
             }
         });
+        client.addListener(new Listener() {
+            public void received(Connection connection, Object object) {
+                if (object instanceof RequestCurrRankingEvent) {
+                    RequestCurrRankingEvent iterator = (RequestCurrRankingEvent)object;
+                    int i=1;
+                    for (Map.Entry<String, Integer> stringIntegerEntry : iterator.getPlayersSorted().entrySet()) {
+                        leaderboard.setPlace(stringIntegerEntry.getKey(),stringIntegerEntry.getValue(),i);
+                        i++;
+                    }
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            game.setScreen(new Board(game));
+                        }
+                    });
+
+                }
+
+
+            }
+        });
 
 
 
