@@ -55,7 +55,7 @@ public class Leaderboard {
 
     public void  setPlace(String username , int coins , int place){
 
-        String toPlace = place+". "+username+" "+"Coins: "+coins;
+        String toPlace = place+". "+username;
         places.get(place-1).setText(toPlace);
     }
 }
