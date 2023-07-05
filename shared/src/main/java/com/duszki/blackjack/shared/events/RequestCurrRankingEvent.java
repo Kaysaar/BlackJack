@@ -3,6 +3,11 @@ package com.duszki.blackjack.shared.events;
 import java.util.HashMap;
 
 public class RequestCurrRankingEvent {
+
+    public RequestCurrRankingEvent(){
+
+    }
+
     public HashMap<String, Integer> getPlayersSorted() {
         return playersSorted;
     }
