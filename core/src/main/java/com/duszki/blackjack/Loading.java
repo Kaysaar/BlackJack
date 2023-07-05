@@ -88,7 +88,6 @@ public class Loading implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-
                 RequestGameStartEvent requestGameStartEvent = new RequestGameStartEvent();
                 client.sendTCP(requestGameStartEvent);
 
@@ -119,18 +118,14 @@ public class Loading implements Screen {
                         leaderboard.setPlace(stringIntegerEntry.getKey(),stringIntegerEntry.getValue(),i);
                         i++;
                     }
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            game.setScreen(new Board(game));
-                        }
-                    });
 
                 }
-
-
             }
         });
+        RequestCurrRankingEvent requestCurrRankingEvent = new RequestCurrRankingEvent();
+        client.sendTCP(requestCurrRankingEvent);
+
+
 
 
 
@@ -147,10 +142,7 @@ public class Loading implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
         batch.draw(textureRegion, 0, 0, width, height);
-
-
         batch.end();
         stage.draw();
         stage.act();
