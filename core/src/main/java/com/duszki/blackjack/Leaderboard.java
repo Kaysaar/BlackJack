@@ -5,6 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.duszki.blackjack.shared.events.RequestCurrRankingEvent;
+
+import java.util.ArrayList;
 
 public class Leaderboard {
     private float width;
@@ -14,17 +17,15 @@ public class Leaderboard {
     private Board board;
 
 
-    private Label firstPlace;
-    private Label secondPlace;
-    private Label thirdPlace;
-    private Label forthPlace;
-    private Label fifthPlace;
+    private ArrayList<Label> places = new ArrayList<>();
 
-    public Leaderboard(Board board){
+    //TODO Better way of transfering data
+
+    public Leaderboard(){
         aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
         height = 1000;
         width = height * aspectRatio;
-        this.board = board;
+       // this.board = board;
 
         Skin skin = new Skin(Gdx.files.internal("Login/skins.json"));
 
@@ -35,40 +36,26 @@ public class Leaderboard {
         table.setPosition((width - table.getWidth())/2f,200);
         table.padLeft(100f);
 
-        firstPlace = new Label("1. ",skin);
-        secondPlace = new Label("2. ",skin);
-        thirdPlace = new Label("3. ",skin);
-        forthPlace = new Label("4. ",skin);
-        fifthPlace = new Label("5. ",skin);
+        places.add(new Label("1. ",skin)) ;
+        places.add(new Label("2. ",skin)) ;
+        places.add(new Label("3. ",skin)) ;
+        places.add(new Label("4. ",skin)) ;
+        places.add(new Label("5. ",skin)) ;
 
-        table.add(firstPlace).padBottom(10f).row();
-        table.add(secondPlace).padBottom(10f).row();
-        table.add(thirdPlace).padBottom(10f).row();
-        table.add(forthPlace).padBottom(10f).row();
-        table.add(fifthPlace).padBottom(10f).row();
+        table.add(places.get(0)).padBottom(10f).row();
+        table.add(places.get(1)).padBottom(10f).row();
+        table.add(places.get(2)).padBottom(10f).row();
+        table.add(places.get(3)).padBottom(10f).row();
+        table.add(places.get(4)).padBottom(10f).row();
     }
 
     public Table getTable() {
         return table;
     }
 
-    void setFirstPlace(String username){
-        fifthPlace.setText("1. " + username);
-    }
-    void setSecondPlace(String username){
-        fifthPlace.setText("2. " + username);
-    }
-    void setThirdPlace(String username){
-        fifthPlace.setText("3. " + username);
-    }
-    void setForthPlace(String username){
-        fifthPlace.setText("4. " + username);
-    }
-    void setFifthPlace(String username){
-        fifthPlace.setText("5. " + username);
-    }
+    public void  setPlace(String username , int coins , int place){
 
-
-
-
+        String toPlace = place+". "+username;
+        places.get(place-1).setText(toPlace);
+    }
 }

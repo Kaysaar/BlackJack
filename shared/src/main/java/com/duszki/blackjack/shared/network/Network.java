@@ -10,6 +10,7 @@ import com.esotericsoftware.kryonet.EndPoint;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Network {
 
@@ -20,6 +21,8 @@ public class Network {
         kryo.register(Boolean.class);
 
         kryo.register(Date.class);
+
+        kryo.register(HashMap.class);
 
         kryo.register(Card.class);
         kryo.register(Hand.class);
@@ -35,6 +38,7 @@ public class Network {
         kryo.register(RequestGameStartEvent.class);
         kryo.register(StandEvent.class);
         kryo.register(YourTurnEvent.class);
+        kryo.register(RequestCurrRankingEvent.class);
 
         kryo.register(HitEvent.class);
         kryo.register(RequestBetEvent.class);

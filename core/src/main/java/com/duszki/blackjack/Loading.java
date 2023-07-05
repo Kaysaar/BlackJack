@@ -11,10 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.duszki.blackjack.shared.events.GameStartedEvent;
+import com.duszki.blackjack.shared.events.RequestCurrRankingEvent;
 import com.duszki.blackjack.shared.events.RequestGameStartEvent;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 public class Loading implements Screen {
@@ -23,6 +28,8 @@ public class Loading implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private FitViewport viewport;
+
+    private HashMap<String, Integer> players;
 
     private float delaySeconds = 5.0f;
     private float elapsedTime = 0.0f;
@@ -38,6 +45,8 @@ public class Loading implements Screen {
     private Stage stage;
 
     private InputMultiplexer multiplexer;
+
+    private Leaderboard leaderboard;
 
     Client client;
 
@@ -57,7 +66,7 @@ public class Loading implements Screen {
         startButtonSkin = new Skin(Gdx.files.internal("skins/Play/PlayButton.json"));
         startGameButton = new ImageButton(startButtonSkin);
 
-        startGameButton.setPosition(width / 2f - startGameButton.getWidth() / 2f, height / 2f - startGameButton.getHeight() / 2f);
+        startGameButton.setPosition(width / 2f - startGameButton.getWidth() / 2f, 100);
 
         stage.addActor(startGameButton);
 
@@ -67,13 +76,21 @@ public class Loading implements Screen {
 
         Gdx.input.setInputProcessor(multiplexer);
 
+        leaderboard = new Leaderboard();
+        stage.addActor(leaderboard.getTable());
+
+
         client = NetworkManager.getClient();
+
+        players = new HashMap<>();
 
         startGameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+
                 RequestGameStartEvent requestGameStartEvent = new RequestGameStartEvent();
                 client.sendTCP(requestGameStartEvent);
+
             }
         });
 
@@ -87,10 +104,29 @@ public class Loading implements Screen {
                         }
                     });
 
+                }
+
+
+            }
+        });
+        client.addListener(new Listener() {
+            public void received(Connection connection, Object object) {
+                if (object instanceof RequestCurrRankingEvent) {
+                    RequestCurrRankingEvent iterator = (RequestCurrRankingEvent)object;
+                    int i=1;
+                    for (Map.Entry<String, Integer> stringIntegerEntry : iterator.getPlayersSorted().entrySet()) {
+                        leaderboard.setPlace(stringIntegerEntry.getKey(),stringIntegerEntry.getValue(),i);
+                        i++;
+                    }
 
                 }
             }
         });
+        RequestCurrRankingEvent requestCurrRankingEvent = new RequestCurrRankingEvent();
+        client.sendTCP(requestCurrRankingEvent);
+
+
+
 
 
     }
@@ -108,7 +144,6 @@ public class Loading implements Screen {
         batch.begin();
         batch.draw(textureRegion, 0, 0, width, height);
         batch.end();
-
         stage.draw();
         stage.act();
 
@@ -139,4 +174,11 @@ public class Loading implements Screen {
         batch.dispose();
 
     }
+
+    public void updatePlayersInLobby(){
+        RequestCurrRankingEvent requestCurrRankingEvent = new RequestCurrRankingEvent();
+        this.players =  requestCurrRankingEvent.getPlayersSorted();
+    }
+
+
 }
