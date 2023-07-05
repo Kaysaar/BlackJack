@@ -58,6 +58,8 @@ public class Board implements Screen {
 
     private PlayerData yourData;
 
+    private UnrevealedCard blank;
+
 
     public Board(Game game) {
 
@@ -98,7 +100,8 @@ public class Board implements Screen {
 
         Balance balance = new Balance(this);
         stage.addActor(balance.getTable());
-
+        blank = new UnrevealedCard("back");
+        blank.setDealerAction(0);
 
         hand = new ArrayList<>();
         dealer = new ArrayList<>();
@@ -110,6 +113,7 @@ public class Board implements Screen {
         buttonHit = new ImageButton(skin, "Hit");
         buttonHit.setPosition(width - width / 5, 300);
         stage.addActor(buttonHit);
+        buttonHit.setVisible(false);
         buttonHit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -125,6 +129,7 @@ public class Board implements Screen {
         buttonStand.setPosition(width - width / 5, 200);
 
         stage.addActor(buttonStand);
+        buttonStand.setVisible(false);
 
         buttonStand.addListener(new ClickListener() {
             @Override
@@ -140,6 +145,7 @@ public class Board implements Screen {
         buttonDouble.setPosition(width - width / 5, 100);
 
         stage.addActor(buttonDouble);
+        buttonDouble.setVisible(false);
 
         buttonDouble.addListener(new ClickListener() {
             @Override
@@ -166,11 +172,11 @@ public class Board implements Screen {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-//                    removeCards();
 
                     balance.setBalance(Integer.toString(gameUpdateData.getYourData().getTokens()));
 
                     Card card;
+
                     for (int i = 0; i < 2; i++) {
 
                         card = gameUpdateData.getYourData().getHand().getCardsInHand().get(i);
@@ -206,7 +212,9 @@ public class Board implements Screen {
                         }
 
                     }
-
+                    buttonHit.setVisible(true);
+                    buttonDouble.setVisible(true);
+                    buttonStand.setVisible(true);
                 }
             }
 
@@ -271,6 +279,9 @@ public class Board implements Screen {
 
                     RequestBetEvent requestBetEvent = (RequestBetEvent) object;
 
+                    buttonHit.setVisible(false);
+                    buttonDouble.setVisible(false);
+                    buttonStand.setVisible(false);
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
@@ -301,19 +312,16 @@ public class Board implements Screen {
     }
 
     void addCardforDealer(String card) {
-//        UnrevealedCard unrevealedCard;
-//        if(Dealer.size() == 0) {
-//            unrevealedCard = new UnrevealedCard("back");
-//        }else {
-//            unrevealedCard = new UnrevealedCard("10_of_clubs");
-//        }
+
 
         UnrevealedCard unrevealedCard = new UnrevealedCard(card);
-
         unrevealedCard.setDealerAction(dealer.size());
+        System.out.println(dealer.size());
         stage.addActor(unrevealedCard.getImage());
         dealer.add(unrevealedCard);
     }
+
+
 
     void removeCards() {
         for (UnrevealedCard unrevealedCard : hand) {
@@ -324,6 +332,8 @@ public class Board implements Screen {
             unrevealedCard.getImage().addAction(Actions.removeActor());
         }
         dealer.clear();
+        blank.getImage().addAction(Actions.removeActor());
+
     }
 
 
