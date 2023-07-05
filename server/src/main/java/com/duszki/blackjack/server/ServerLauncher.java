@@ -246,7 +246,7 @@ public class ServerLauncher {
 
                         response.setPlayersSorted(currentRanking());
 
-                        server.sendToTCP(connection.getID(), response);
+                        server.sendToAllTCP( response);
                     }
                 }
 
