@@ -49,6 +49,10 @@ public class Network {
         kryo.register(GameUpdateData.class);
         kryo.register(PlayerData.class);
 
+        kryo.register(EndOfGameEvent.class);
+
+        kryo.register(AcceptBetEvent.class);
+
 
     }
 
