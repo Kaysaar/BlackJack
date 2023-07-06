@@ -159,14 +159,26 @@ public class ServerLauncher {
                     PlayerServerData currentPlayer = getPlayerByConnection(connection);
 
                     if (currentPlayer.getConnection() == connection) {
-                        if (currentPlayer.getTokens() >= placeBetEvent.getBet() && placeBetEvent.getBet() > 0) {
+                        if (currentPlayer.getTokens() >= placeBetEvent.getBet()&&currentPlayer.getTokens()!=0) {
                             currentPlayer.setBet(placeBetEvent.getBet());
                             currentPlayer.setTokens(currentPlayer.getTokens() - placeBetEvent.getBet());
                             currentPlayer.setBetPlaced(true);
-                            server.sendToTCP(currentPlayer.getConnection().getID(), new AcceptBetEvent(true));
-                        } else {
-                            server.sendToTCP(currentPlayer.getConnection().getID(), new AcceptBetEvent(false));
                         }
+                        else if (currentPlayer.getTokens()!=0){
+                            currentPlayer.setBet(currentPlayer.getBet()-1);
+                            currentPlayer.setTokens(0);
+                            currentPlayer.setBetPlaced(true);
+                        }
+                        else{
+                            NotValidatedToDoEvent notEnoughTokens = new NotValidatedToDoEvent();
+                            notEnoughTokens.setMessage("You dont have any tokens left to make that operation");
+                            notEnoughTokens.setStatus(0);
+                            currentPlayer.setBet(0);
+                            currentPlayer.setBetPlaced(true);
+                            server.sendToTCP(connection.getID(),notEnoughTokens);
+
+                        }
+
                     }
 
                     if (areAllBetsPlaced()) {
