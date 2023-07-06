@@ -403,6 +403,7 @@ public class ServerLauncher {
 
         server.sendToAllTCP(new RequestBetEvent());
 
+
     }
 
     public void startRound() {
@@ -491,9 +492,11 @@ public class ServerLauncher {
 
         player.getPlayerHand().addCard(shoe.getCardFromShoe());
 
+        sendGameUpdateToPlayers();
+
         stand(player);
 
-        sendGameUpdateToPlayers();
+
 
     }
 
