@@ -281,7 +281,7 @@ public class ServerLauncher {
             public void disconnected(Connection connection) {
                 PlayerServerData player = getPlayerByConnection(connection);
 
-                if(currentPlayerCursor == storedPlayerData.indexOf(player)){
+                if (currentPlayerCursor == storedPlayerData.indexOf(player)) {
                     nextPlayer();
                 }
 
@@ -308,6 +308,10 @@ public class ServerLauncher {
 
     }
 
+//    private sendBalanceAtEndOfRound() {
+//
+//    }
+
     private HashMap<String, Integer> currentRanking() {
         HashMap<String, Integer> currValues = new HashMap<>();
         ArrayList<PlayerServerData> copyOfStoredData = new ArrayList<>(storedPlayerData);
@@ -324,8 +328,8 @@ public class ServerLauncher {
 
         GameUpdateData gameUpdateData = new GameUpdateData();
         gameUpdateData.setDealerHand(dealer.getHand());
-        if(dealer.getHand().getCardsInHand().size() > 0) {
-            if(roundStarted) {
+        if (dealer.getHand().getCardsInHand().size() > 0) {
+            if (roundStarted) {
                 gameUpdateData.getDealerHand().getCardsInHand().get(0).setHidden(true);
             } else {
                 gameUpdateData.getDealerHand().getCardsInHand().get(0).setHidden(false);
@@ -453,7 +457,6 @@ public class ServerLauncher {
         }
 
 
-
         storedPlayerData.get(0).getConnection().sendTCP(new YourTurnEvent());
 
     }
@@ -497,7 +500,6 @@ public class ServerLauncher {
         stand(player);
 
 
-
     }
 
     public void nextPlayer() {
@@ -518,8 +520,8 @@ public class ServerLauncher {
 
         checkWinners();
 
-        if(finalRound) {
-            for(PlayerServerData player : storedPlayerData) {
+        if (finalRound) {
+            for (PlayerServerData player : storedPlayerData) {
                 server.sendToTCP(player.getConnection().getID(), new EndOfGameEvent(player.playerName, player.getTokens()));
 
                 try {
@@ -588,16 +590,30 @@ public class ServerLauncher {
     }
 
     public void checkWinners() {
+
+        HashMap<String, Integer> currWinnings = new HashMap<>();
+
+
         for (PlayerServerData storedPlayerData : storedPlayerData) {
             if (storedPlayerData.getPlayerHand().getHandValue() <= MAX_HAND_VALUE) {
                 if (storedPlayerData.getPlayerHand().getHandValue() > dealer.getHand().getHandValue()) {
                     storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet() * 2);
+                    currWinnings.put(storedPlayerData.playerName, storedPlayerData.getBet() * 2);
                 } else if (storedPlayerData.getPlayerHand().getHandValue() == dealer.getHand().getHandValue()) {
                     storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
+                    currWinnings.put(storedPlayerData.playerName, -storedPlayerData.getBet());
+                } else {
+                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
+                    currWinnings.put(storedPlayerData.playerName, -storedPlayerData.getBet());
                 }
 
+            } else {
+                storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
+                currWinnings.put(storedPlayerData.playerName, -storedPlayerData.getBet());
             }
         }
+
+        sendCurrentWinnings(currWinnings);
 
         for (PlayerServerData storedPlayerData : storedPlayerData) {
             if (storedPlayerData.getTokens() <= 0) {
@@ -621,6 +637,16 @@ public class ServerLauncher {
 
             }
         }
+
+    }
+
+    public void sendCurrentWinnings(HashMap<String, Integer> currWinnings) {
+
+        CurrentRoundWinnings currentRoundWinnings = new CurrentRoundWinnings();
+
+        currentRoundWinnings.setCurrentWinnings(currWinnings);
+
+        server.sendToAllTCP(currentRoundWinnings);
 
     }
 

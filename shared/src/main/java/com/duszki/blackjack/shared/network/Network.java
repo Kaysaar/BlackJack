@@ -53,6 +53,8 @@ public class Network {
 
         kryo.register(AcceptBetEvent.class);
 
+        kryo.register(CurrentRoundWinnings.class);
+
 
     }
 

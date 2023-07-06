@@ -1,10 +1,12 @@
 package com.duszki.blackjack;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.duszki.blackjack.shared.events.RequestCurrRankingEvent;
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ public class Leaderboard {
     private Table table;
     private Board board;
 
+    private ImageButton quitButton;
 
     private ArrayList<Label> places = new ArrayList<>();
 
@@ -48,6 +51,12 @@ public class Leaderboard {
         table.add(places.get(3)).left().padBottom(10f).row();
         table.add(places.get(4)).left().padBottom(10f).row();
 
+        Skin quitButtonSkin = new Skin(Gdx.files.internal("skins/Quit/QuitButton.json"));
+        quitButton = new ImageButton(quitButtonSkin);
+        quitButton.setVisible(false);
+
+        table.add(quitButton).padTop(20f).padLeft(150f).row();
+
     }
 
     public Table getTable() {
@@ -59,4 +68,14 @@ public class Leaderboard {
         String toPlace = place+". "+username;
         places.get(place-1).setText(toPlace);
     }
+
+    public ArrayList<Label> getPlaces() {
+        return places;
+    }
+
+    public ImageButton getQuitButton() {
+        return quitButton;
+    }
+
+
 }
