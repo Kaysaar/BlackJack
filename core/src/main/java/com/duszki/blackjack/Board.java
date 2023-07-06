@@ -166,6 +166,7 @@ public class Board implements Screen {
                 DoubleDownEvent doubleEvent = new DoubleDownEvent();
                 client.sendTCP(doubleEvent);
                 buttonDouble.setVisible(false);
+                bet.getTable().setVisible(false);
 
             }
         });
@@ -234,9 +235,7 @@ public class Board implements Screen {
                         }
 
                     }
-//                    buttonHit.setVisible(true);
-//                    buttonDouble.setVisible(true);
-//                    buttonStand.setVisible(true);
+
                 }
             }
 
