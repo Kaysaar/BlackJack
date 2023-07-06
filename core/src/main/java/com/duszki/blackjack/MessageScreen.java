@@ -81,6 +81,7 @@ public class MessageScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
+                game.dispose();
                 game.setScreen(new Homepage(game));
 
             }

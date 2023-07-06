@@ -114,7 +114,6 @@ public class Login {
                             }
                         });
 
-//                        game.setScreen(new Loading(game));
 
                     } else {
                         textField2.setText("");
