@@ -41,9 +41,9 @@ public class Homepage implements Screen {
 
     private InputMultiplexer multiplexer;
 
-    private Music music;
+    private static Music music;
 
-    public Music getMusic() {
+    public static Music getMusic() {
         return music;
     }
 
