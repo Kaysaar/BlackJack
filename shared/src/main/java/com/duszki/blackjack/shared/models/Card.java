@@ -10,6 +10,8 @@ public class Card {
     private String suit;
     private String rank;
 
+    private boolean hidden = false;
+
 
     public static List<String> getValidSuits() {
         return Arrays.asList("spades", "hearts", "diamonds", "clubs");
@@ -39,6 +41,14 @@ public class Card {
 
     public String toString() {
         return rank + "_of_" + suit;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 
 }

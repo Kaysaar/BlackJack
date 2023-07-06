@@ -83,4 +83,8 @@ public class PlayerServerData {
     }
 
 
+    public void setHasLost(boolean hasLost) {
+        this.hasLost = hasLost;
+
+    }
 }

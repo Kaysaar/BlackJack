@@ -42,11 +42,12 @@ public class Leaderboard {
         places.add(new Label("4. ",skin)) ;
         places.add(new Label("5. ",skin)) ;
 
-        table.add(places.get(0)).padBottom(10f).row();
-        table.add(places.get(1)).padBottom(10f).row();
-        table.add(places.get(2)).padBottom(10f).row();
-        table.add(places.get(3)).padBottom(10f).row();
-        table.add(places.get(4)).padBottom(10f).row();
+        table.add(places.get(0)).left().padBottom(10f).row();
+        table.add(places.get(1)).left().padBottom(10f).row();
+        table.add(places.get(2)).left().padBottom(10f).row();
+        table.add(places.get(3)).left().padBottom(10f).row();
+        table.add(places.get(4)).left().padBottom(10f).row();
+
     }
 
     public Table getTable() {

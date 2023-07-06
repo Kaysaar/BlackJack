@@ -4,12 +4,16 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -198,12 +202,21 @@ public class Board implements Screen {
 
                         Card finalCard1 = card;
 
-                        Gdx.app.postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                addCardforDealer(finalCard1.toString());
-                            }
-                        });
+                        if(card.isHidden()) {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addCardforDealer("back");
+                                }
+                            });
+                        } else {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addCardforDealer(finalCard1.toString());
+                                }
+                            });
+                        }
 
                         try {
                             Thread.sleep(1000);
@@ -212,9 +225,9 @@ public class Board implements Screen {
                         }
 
                     }
-                    buttonHit.setVisible(true);
-                    buttonDouble.setVisible(true);
-                    buttonStand.setVisible(true);
+//                    buttonHit.setVisible(true);
+//                    buttonDouble.setVisible(true);
+//                    buttonStand.setVisible(true);
                 }
             }
 
@@ -250,6 +263,20 @@ public class Board implements Screen {
                     }
 
                     if (gameUpdateData.getDealerHand().getCardsInHand().size() > dealer.size()) {
+
+                        if(!gameUpdateData.getDealerHand().getCardsInHand().get(0).isHidden()) {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("carddeck/carddeck/carddeck.atlas"));
+                                    TextureAtlas.AtlasRegion region = atlas.findRegion(gameUpdateData.getDealerHand().getCardsInHand().get(0).toString());
+                                    TextureRegionDrawable drawable = new TextureRegionDrawable(region);
+                                    blank.getImage().setDrawable(drawable);
+
+                                }
+                            });
+                        }
+
                         card = gameUpdateData.getDealerHand().getCardsInHand().get(dealer.size());
                         Card finalCard = card;
                         Gdx.app.postRunnable(new Runnable() {
@@ -299,6 +326,38 @@ public class Board implements Screen {
             }
         });
 
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof EndOfGameEvent) {
+                    EndOfGameEvent endOfGameEvent = (EndOfGameEvent) object;
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(2500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            game.setScreen(new FinalScreen(game, endOfGameEvent.getUsername(), endOfGameEvent.getCoins()));
+                        }
+                    });
+
+                }
+            }
+        });
+
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof YourTurnEvent) {
+                    buttonHit.setVisible(true);
+                    buttonDouble.setVisible(true);
+                    buttonStand.setVisible(true);
+                }
+            }
+        });
+
 
     }
 
@@ -313,14 +372,17 @@ public class Board implements Screen {
 
     void addCardforDealer(String card) {
 
-
         UnrevealedCard unrevealedCard = new UnrevealedCard(card);
         unrevealedCard.setDealerAction(dealer.size());
         System.out.println(dealer.size());
         stage.addActor(unrevealedCard.getImage());
         dealer.add(unrevealedCard);
-    }
 
+        if(card.equals("back")) {
+            blank = unrevealedCard;
+        }
+
+    }
 
 
     void removeCards() {

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import com.duszki.blackjack.shared.events.AcceptBetEvent;
 import com.duszki.blackjack.shared.events.PlaceBetEvent;
 import com.esotericsoftware.kryonet.*;
 
@@ -24,7 +25,7 @@ public class Bet {
     private Table table;
     private Board board;
     private TextField textField;
-//    private String string;
+    //    private String string;
     ImageButton buttonBet;
 
     public Bet(Board board) {
@@ -71,9 +72,21 @@ public class Bet {
 
                 NetworkManager.getClient().sendTCP(placeBetEvent);
 
-                table.setVisible(false);
+            }
+        });
 
-                textField.setText("");
+        NetworkManager.getClient().addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof AcceptBetEvent) {
+                    AcceptBetEvent acceptBetEvent = (AcceptBetEvent) object;
+
+                    if (acceptBetEvent.isAccepted()) {
+                        table.setVisible(false);
+                    }
+                    textField.setText("");
+
+                }
             }
         });
 
@@ -82,13 +95,5 @@ public class Bet {
     public Table getTable() {
         return table;
     }
-
-//    public String getBet() {
-//        return this.string;
-//    }
-
-//    public ImageButton getButton() {
-//        return buttonBet;
-//    }
 
 }

@@ -75,6 +75,8 @@ public class ServerLauncher {
 
                 if (object instanceof JoinRequestEvent) {
 
+                    JoinRequestEvent joinRequestEvent = (JoinRequestEvent) object;
+
                     JoinResponseEvent joinResponseEvent = new JoinResponseEvent();
 
                     if (hasGameStarted) {
@@ -83,9 +85,20 @@ public class ServerLauncher {
                         joinResponseEvent.setMessage("Sorry, the game has already started!");
                         connection.sendTCP(joinResponseEvent);
 
+                    } else if (joinRequestEvent.getPlayerName().isEmpty()) {
+
+                        joinResponseEvent.setSuccess(false);
+                        joinResponseEvent.setMessage("Nickname cannot be empty!");
+                        connection.sendTCP(joinResponseEvent);
+
+                    } else if (isNicknameTaken(joinRequestEvent.getPlayerName())) {
+
+                        joinResponseEvent.setSuccess(false);
+                        joinResponseEvent.setMessage("Nickname is already taken!");
+                        connection.sendTCP(joinResponseEvent);
+
                     } else {
 
-                        JoinRequestEvent joinRequestEvent = (JoinRequestEvent) object;
 
                         if (storedPlayerData.size() < MAX_PLAYERS) {
                             PlayerServerData serverPlayer = new PlayerServerData(connection, joinRequestEvent.getPlayerName());
@@ -146,10 +159,13 @@ public class ServerLauncher {
                     PlayerServerData currentPlayer = getPlayerByConnection(connection);
 
                     if (currentPlayer.getConnection() == connection) {
-                        if (currentPlayer.getTokens() >= placeBetEvent.getBet()) {
+                        if (currentPlayer.getTokens() >= placeBetEvent.getBet() && placeBetEvent.getBet() > 0) {
                             currentPlayer.setBet(placeBetEvent.getBet());
                             currentPlayer.setTokens(currentPlayer.getTokens() - placeBetEvent.getBet());
                             currentPlayer.setBetPlaced(true);
+                            server.sendToTCP(currentPlayer.getConnection().getID(), new AcceptBetEvent(true));
+                        } else {
+                            server.sendToTCP(currentPlayer.getConnection().getID(), new AcceptBetEvent(false));
                         }
                     }
 
@@ -169,6 +185,8 @@ public class ServerLauncher {
                     if (!roundStarted) return;
 
                     PlayerServerData currentPlayer = getPlayerByConnection(connection);
+
+                    if (storedPlayerData.get(currentPlayerCursor) != currentPlayer) return;
 
                     if (currentPlayer.getConnection() == connection) {
                         if (!currentPlayer.getStand()) {
@@ -190,6 +208,8 @@ public class ServerLauncher {
 
                     PlayerServerData currentPlayer = getPlayerByConnection(connection);
 
+                    if (storedPlayerData.get(currentPlayerCursor) != currentPlayer) return;
+
                     if (currentPlayer.getConnection() == connection) {
                         stand(currentPlayer);
                         sendGameUpdateToPlayers();
@@ -207,6 +227,8 @@ public class ServerLauncher {
                 if (object instanceof DoubleDownEvent) {
 
                     PlayerServerData currentPlayer = getPlayerByConnection(connection);
+
+                    if (storedPlayerData.get(currentPlayerCursor) != currentPlayer) return;
 
                     if (currentPlayer.getPlayerHand().getCardsInHand().size() == 2) {
                         int currTokens = currentPlayer.getTokens();
@@ -246,7 +268,7 @@ public class ServerLauncher {
 
                         response.setPlayersSorted(currentRanking());
 
-                        server.sendToAllTCP( response);
+                        server.sendToAllTCP(response);
                     }
                 }
 
@@ -297,6 +319,14 @@ public class ServerLauncher {
 
         GameUpdateData gameUpdateData = new GameUpdateData();
         gameUpdateData.setDealerHand(dealer.getHand());
+        if(dealer.getHand().getCardsInHand().size() > 0) {
+            if(roundStarted) {
+                gameUpdateData.getDealerHand().getCardsInHand().get(0).setHidden(true);
+            } else {
+                gameUpdateData.getDealerHand().getCardsInHand().get(0).setHidden(false);
+            }
+        }
+
         gameUpdateData.getYourData().setHand(player.getPlayerHand());
         gameUpdateData.getYourData().setTokens(player.getTokens());
 
@@ -331,7 +361,7 @@ public class ServerLauncher {
         storedPlayerData.clear();
         dealer.getHand().clearHand();
         finalRound = false;
-//        initialize_game();
+
     }
 
     public void initialize_game() {
@@ -371,6 +401,8 @@ public class ServerLauncher {
     }
 
     public void startRound() {
+
+        roundStarted = true;
 
 //        currentPlayerCursor = 0;
         Card card_from_deck_first;
@@ -414,7 +446,9 @@ public class ServerLauncher {
 
         }
 
-        roundStarted = true;
+
+
+        storedPlayerData.get(currentPlayerCursor).getConnection().sendTCP(new YourTurnEvent());
 
     }
 
@@ -433,6 +467,7 @@ public class ServerLauncher {
 
         // if all players have stand then dealer will play
         if (allPlayersHaveStand()) {
+            roundStarted = false;
             dealerPlay();
 
         } else {
@@ -450,7 +485,8 @@ public class ServerLauncher {
 
 
         player.getPlayerHand().addCard(shoe.getCardFromShoe());
-        player.setStand(true);
+
+        stand(player);
 
         sendGameUpdateToPlayers();
 
@@ -459,8 +495,11 @@ public class ServerLauncher {
     public void nextPlayer() {
         PlayerServerData nextPlayer;
 
+//        do {
         currentPlayerCursor = (currentPlayerCursor + 1) % storedPlayerData.size();
         nextPlayer = storedPlayerData.get(currentPlayerCursor);
+//        } while (nextPlayer.getHasLost() || currentPlayerCursor == 0);
+//
 
         nextPlayer.getConnection().sendTCP(new YourTurnEvent());
     }
@@ -470,6 +509,25 @@ public class ServerLauncher {
         roundStarted = false;
 
         checkWinners();
+
+        if(finalRound) {
+            for(PlayerServerData player : storedPlayerData) {
+                server.sendToTCP(player.getConnection().getID(), new EndOfGameEvent(player.playerName, player.getTokens()));
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                player.getConnection().close();
+
+
+            }
+
+            resetGame();
+
+        }
 
         for (PlayerServerData storedPlayerData : storedPlayerData) {
 
@@ -491,8 +549,9 @@ public class ServerLauncher {
 
         System.out.println(storedPlayerData.size());
         int i = 0;
+
         for (PlayerServerData storedPlayerData : storedPlayerData) {
-            if (!storedPlayerData.getStand()) {
+            if (!storedPlayerData.getStand() && !storedPlayerData.getHasLost()) {
                 System.out.println("not all players have stand");
                 System.out.println(i++);
                 return false;
@@ -531,6 +590,30 @@ public class ServerLauncher {
 
             }
         }
+
+        for (PlayerServerData storedPlayerData : storedPlayerData) {
+            if (storedPlayerData.getTokens() <= 0) {
+                storedPlayerData.setHasLost(true);
+
+                Connection connection = storedPlayerData.getConnection();
+
+                EndOfGameEvent endOfGameEvent = new EndOfGameEvent(storedPlayerData.playerName, storedPlayerData.getTokens());
+                server.sendToTCP(connection.getID(), endOfGameEvent);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                connection.close();
+
+                this.storedPlayerData.remove(storedPlayerData);
+
+
+            }
+        }
+
     }
 
 
@@ -556,6 +639,15 @@ public class ServerLauncher {
             }
         }
         return true;
+    }
+
+    boolean isNicknameTaken(String nickname) {
+        for (PlayerServerData storedPlayerData : storedPlayerData) {
+            if (storedPlayerData.playerName.equals(nickname)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
