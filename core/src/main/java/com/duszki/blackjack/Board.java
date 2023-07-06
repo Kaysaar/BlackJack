@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -18,6 +19,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
 import com.duszki.blackjack.shared.data.*;
@@ -212,7 +215,7 @@ public class Board implements Screen {
 
                         Card finalCard1 = card;
 
-                        if(card.isHidden()) {
+                        if (card.isHidden()) {
                             Gdx.app.postRunnable(new Runnable() {
                                 @Override
                                 public void run() {
@@ -271,8 +274,8 @@ public class Board implements Screen {
 
                         }
 
-                        if(gameUpdateData.getDealerHand().getCardsInHand().size() >= 2) {
-                            if(!gameUpdateData.getDealerHand().getCardsInHand().get(0).isHidden()) {
+                        if (gameUpdateData.getDealerHand().getCardsInHand().size() >= 2) {
+                            if (!gameUpdateData.getDealerHand().getCardsInHand().get(0).isHidden()) {
                                 Gdx.app.postRunnable(new Runnable() {
                                     @Override
                                     public void run() {
@@ -306,8 +309,6 @@ public class Board implements Screen {
                             }
                         }
                     }
-
-
 
 
                 }
@@ -374,6 +375,62 @@ public class Board implements Screen {
             }
         });
 
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof CurrentRoundWinnings) {
+
+                    CurrentRoundWinnings currentRoundWinnings = (CurrentRoundWinnings) object;
+
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            Leaderboard leaderboard = new Leaderboard();
+                            ArrayList<Label> leaderboardData = leaderboard.getPlaces();
+
+                            HashMap<String, Integer> leaderboardMap = currentRoundWinnings.getCurrentWinnings();
+
+                            Gdx.app.log("Leaderboard", String.valueOf(leaderboardMap.size()));
+
+                            for(int i = 0; i < leaderboardData.size(); i++) {
+                                leaderboardData.get(i).setText("");
+                            }
+
+                            int i = 0;
+                            for (Map.Entry<String, Integer> entry : leaderboardMap.entrySet()) {
+                                if(entry.getValue()>=0) {
+                                    leaderboardData.get(i).setText(entry.getKey() + " : +" + entry.getValue());
+                                } else {
+                                    leaderboardData.get(i).setText(entry.getKey() + " : " + entry.getValue());
+                                }
+
+                                i++;
+                                if(i > leaderboardData.size() - 1) {
+                                    break;
+                                }
+                                Gdx.app.log("Leaderboard","new entry added");
+                            }
+
+                            leaderboard.getTable().setVisible(true);
+                            leaderboard.getQuitButton().addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    leaderboard.getTable().setVisible(false);
+                                    leaderboard.getQuitButton().setVisible(false);
+                                }
+                            });
+                            leaderboard.getQuitButton().setVisible(true);
+
+                            stage.addActor(leaderboard.getTable());
+
+
+                        }
+                    });
+
+                }
+            }
+        });
+
 
     }
 
@@ -394,7 +451,7 @@ public class Board implements Screen {
         stage.addActor(unrevealedCard.getImage());
         dealer.add(unrevealedCard);
 
-        if(card.equals("back")) {
+        if (card.equals("back")) {
             blank = unrevealedCard;
         }
 
