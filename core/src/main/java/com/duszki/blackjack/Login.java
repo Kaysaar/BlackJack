@@ -61,15 +61,13 @@ public class Login {
         });
 
 
-
-        textField2.setText("localhost");
-        textField3.setText("5000");
-        textField4.setText("Username");
+//        textField2.setText("localhost");
+//        textField3.setText("5000");
+//        textField4.setText("Username");
         // Client setup
 
         final Client client = new Client();
         Network.register(client);
-
 
 
         imageButton.addListener(new ClickListener() {
@@ -88,6 +86,7 @@ public class Login {
                     textField2.setText("");
                     textField3.setText("");
                     textField4.setText("");
+                    game.setScreen(new MessageScreen(game, e.getMessage()));
                 }
 
 //                Blackjack.getInstance().setClient(client);
@@ -115,14 +114,34 @@ public class Login {
                             }
                         });
 
-//                        game.setScreen(new Loading(game));
 
                     } else {
                         textField2.setText("");
                         textField3.setText("");
                         textField4.setText("");
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                game.setScreen(new MessageScreen(game, joinResponseEvent.getMessage()));
+                            }
+                        });
+
                     }
                 }
+            }
+        });
+
+        client.addListener(new Listener() {
+            @Override
+            public void disconnected(Connection connection) {
+                if (game.getScreen() instanceof FinalScreen) return;
+                if (game.getScreen() instanceof Board) return;
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        game.setScreen(new MessageScreen(game, "Disconnected from server"));
+                    }
+                });
             }
         });
 

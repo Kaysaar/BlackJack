@@ -5,23 +5,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.duszki.blackjack.shared.events.RequestCurrRankingEvent;
+import com.badlogic.gdx.utils.StringBuilder;
 
 import java.util.ArrayList;
 
-public class Leaderboard {
+public class FinalScoreCongratulations {
     private float width;
     private float height;
     private float aspectRatio;
     private Table table;
     private Board board;
 
+    private String username;
+    private int coins;
 
-    private ArrayList<Label> places = new ArrayList<>();
+    private Label usernameLabel;
+    private Label coinsLabel;
 
-    //TODO Better way of transfering data
 
-    public Leaderboard(){
+
+    public FinalScoreCongratulations(String username, int coins){
         aspectRatio = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
         height = 1000;
         width = height * aspectRatio;
@@ -36,17 +39,19 @@ public class Leaderboard {
         table.setPosition((width - table.getWidth())/2f,200);
         table.padLeft(100f);
 
-        places.add(new Label("1. ",skin)) ;
-        places.add(new Label("2. ",skin)) ;
-        places.add(new Label("3. ",skin)) ;
-        places.add(new Label("4. ",skin)) ;
-        places.add(new Label("5. ",skin)) ;
+        String congratualtions = new StringBuilder("Congratulations ").append(username).append("!").toString();
 
-        table.add(places.get(0)).left().padBottom(10f).row();
-        table.add(places.get(1)).left().padBottom(10f).row();
-        table.add(places.get(2)).left().padBottom(10f).row();
-        table.add(places.get(3)).left().padBottom(10f).row();
-        table.add(places.get(4)).left().padBottom(10f).row();
+        usernameLabel = new Label(congratualtions,skin);
+
+        String yourWinnings = new StringBuilder("Your winnings: ").append(coins).append(" coins").toString();
+
+        coinsLabel = new Label(yourWinnings,skin);
+
+        table.add(usernameLabel).padBottom(10f).row();
+
+        table.add(coinsLabel).padBottom(10f).row();
+
+
 
     }
 
@@ -54,9 +59,4 @@ public class Leaderboard {
         return table;
     }
 
-    public void  setPlace(String username , int coins , int place){
-
-        String toPlace = place+". "+username;
-        places.get(place-1).setText(toPlace);
-    }
 }

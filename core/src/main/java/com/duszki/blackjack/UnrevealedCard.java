@@ -39,7 +39,6 @@ public class UnrevealedCard {
     }
 
 
-
     public void setAction(int NumOfCards){
         int shift = 35;
         moveToAction.setPosition(width/2 + shift * NumOfCards - width/15,50 );
@@ -61,6 +60,10 @@ public class UnrevealedCard {
 
     public Image getImage() {
         return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 
 
