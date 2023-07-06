@@ -136,12 +136,17 @@ public class Login {
             public void disconnected(Connection connection) {
                 if (game.getScreen() instanceof FinalScreen) return;
                 if (game.getScreen() instanceof Board) return;
+
+                client.removeListener(this);
+
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
+
                         game.setScreen(new MessageScreen(game, "Disconnected from server"));
                     }
                 });
+
             }
         });
 

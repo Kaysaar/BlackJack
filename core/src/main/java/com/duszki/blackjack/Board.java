@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
 
 import com.duszki.blackjack.shared.data.*;
 import com.duszki.blackjack.shared.events.*;
@@ -28,6 +29,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 
 import com.duszki.blackjack.shared.models.*;
+
+import java.util.concurrent.locks.*;
 
 public class Board implements Screen {
     private static final boolean DEBUG = true;
@@ -42,6 +45,8 @@ public class Board implements Screen {
     private Texture backgroundTexture;
     private OrthographicCamera camera;
     private FitViewport viewport;
+
+    private Object mutex = new Object();
 
     ImageButton buttonHit;
     ImageButton buttonStand;
@@ -64,6 +69,8 @@ public class Board implements Screen {
 
     private UnrevealedCard blank;
 
+    private Lock lock;
+
 
     public Board(Game game) {
 
@@ -74,6 +81,8 @@ public class Board implements Screen {
             Log.DEBUG();
 //            Log.TRACE();
         }
+
+        lock = new ReentrantLock();
 
         this.client = NetworkManager.getClient();
 
@@ -238,60 +247,68 @@ public class Board implements Screen {
             public void received(Connection connection, Object object) {
                 if (object instanceof GameUpdateData) {
 
-                    GameUpdateData gameUpdateData = (GameUpdateData) object;
+                    synchronized (mutex) {
+                        GameUpdateData gameUpdateData = (GameUpdateData) object;
 
-                    balance.setBalance(Integer.toString(gameUpdateData.getYourData().getTokens()));
+                        balance.setBalance(Integer.toString(gameUpdateData.getYourData().getTokens()));
 
-                    Card card;
+                        Card card;
 
-                    if (gameUpdateData.getYourData().getHand().getCardsInHand().size() > hand.size()) {
-                        card = gameUpdateData.getYourData().getHand().getCardsInHand().get(hand.size());
-                        Card finalCard = card;
-                        Gdx.app.postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                addCardBoard(finalCard.toString());
-                            }
-                        });
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }
-
-                    if (gameUpdateData.getDealerHand().getCardsInHand().size() > dealer.size()) {
-
-                        if(!gameUpdateData.getDealerHand().getCardsInHand().get(0).isHidden()) {
+                        if (gameUpdateData.getYourData().getHand().getCardsInHand().size() > hand.size()) {
+                            card = gameUpdateData.getYourData().getHand().getCardsInHand().get(hand.size());
+                            Card finalCard = card;
                             Gdx.app.postRunnable(new Runnable() {
                                 @Override
                                 public void run() {
-                                    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("carddeck/carddeck/carddeck.atlas"));
-                                    TextureAtlas.AtlasRegion region = atlas.findRegion(gameUpdateData.getDealerHand().getCardsInHand().get(0).toString());
-                                    TextureRegionDrawable drawable = new TextureRegionDrawable(region);
-                                    blank.getImage().setDrawable(drawable);
-
+                                    addCardBoard(finalCard.toString());
                                 }
                             });
+
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+
                         }
 
-                        card = gameUpdateData.getDealerHand().getCardsInHand().get(dealer.size());
-                        Card finalCard = card;
-                        Gdx.app.postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                addCardforDealer(finalCard.toString());
-                            }
-                        });
+                        if(gameUpdateData.getDealerHand().getCardsInHand().size() >= 2) {
+                            if(!gameUpdateData.getDealerHand().getCardsInHand().get(0).isHidden()) {
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("carddeck/carddeck/carddeck.atlas"));
+                                        TextureAtlas.AtlasRegion region = atlas.findRegion(gameUpdateData.getDealerHand().getCardsInHand().get(0).toString());
+                                        TextureRegionDrawable drawable = new TextureRegionDrawable(region);
+                                        blank.getImage().setDrawable(drawable);
 
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                                    }
+                                });
+                            }
+                        }
+
+
+                        if (gameUpdateData.getDealerHand().getCardsInHand().size() > dealer.size()) {
+
+                            card = gameUpdateData.getDealerHand().getCardsInHand().get(dealer.size());
+                            Card finalCard = card;
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    addCardforDealer(finalCard.toString());
+                                }
+                            });
+
+
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
+
+
 
 
                 }
@@ -310,7 +327,7 @@ public class Board implements Screen {
                     buttonDouble.setVisible(false);
                     buttonStand.setVisible(false);
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
