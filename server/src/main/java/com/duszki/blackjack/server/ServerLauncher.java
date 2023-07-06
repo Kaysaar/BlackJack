@@ -600,15 +600,15 @@ public class ServerLauncher {
                     storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet() * 2);
                     currWinnings.put(storedPlayerData.playerName, storedPlayerData.getBet() * 2);
                 } else if (storedPlayerData.getPlayerHand().getHandValue() == dealer.getHand().getHandValue()) {
-                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
+                    storedPlayerData.setTokens(storedPlayerData.getTokens() - storedPlayerData.getBet());
                     currWinnings.put(storedPlayerData.playerName, -storedPlayerData.getBet());
                 } else {
-                    storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
+                    storedPlayerData.setTokens(storedPlayerData.getTokens() - storedPlayerData .getBet());
                     currWinnings.put(storedPlayerData.playerName, -storedPlayerData.getBet());
                 }
 
             } else {
-                storedPlayerData.setTokens(storedPlayerData.getTokens() + storedPlayerData.getBet());
+                storedPlayerData.setTokens(storedPlayerData.getTokens() - storedPlayerData.getBet());
                 currWinnings.put(storedPlayerData.playerName, -storedPlayerData.getBet());
             }
         }
