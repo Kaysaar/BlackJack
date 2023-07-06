@@ -85,7 +85,7 @@ public class FinalScreen implements Screen {
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
+                game.dispose();
                 game.setScreen(new Homepage(game));
 
             }

@@ -280,6 +280,11 @@ public class ServerLauncher {
             @Override
             public void disconnected(Connection connection) {
                 PlayerServerData player = getPlayerByConnection(connection);
+
+                if(currentPlayerCursor == storedPlayerData.indexOf(player)){
+                    nextPlayer();
+                }
+
                 storedPlayerData.remove(player);
                 if (storedPlayerData.size() == 0) {
                     resetGame();
@@ -448,7 +453,7 @@ public class ServerLauncher {
 
 
 
-        storedPlayerData.get(currentPlayerCursor).getConnection().sendTCP(new YourTurnEvent());
+        storedPlayerData.get(0).getConnection().sendTCP(new YourTurnEvent());
 
     }
 
