@@ -363,6 +363,30 @@ public class Board implements Screen {
                 }
             }
         });
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof NotValidatedToDoEvent notValidated) {
+                    if(notValidated.getStatus()==0){
+                        buttonHit.setVisible(false);
+                    }
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    removeCards();
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            bet.getTable().setVisible(true);
+                        }
+                    });
+                }
+            }
+        });
+
 
         client.addListener(new Listener() {
             @Override
